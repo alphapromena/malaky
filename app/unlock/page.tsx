@@ -40,13 +40,15 @@ function UnlockForm() {
   }
 
   return (
-    <Card className="w-full max-w-md border-0 shadow-2xl">
+    <Card className="w-full max-w-md border-border/60 shadow-xl">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/20 text-gold-900">
-          <Lock className="h-7 w-7" />
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-50 text-gold-700 ring-1 ring-gold-200">
+          <Lock className="h-6 w-6" />
         </div>
-        <CardTitle className="text-2xl">ملاكي</CardTitle>
-        <CardDescription>أدخل كلمة السر للدخول إلى المنصة</CardDescription>
+        <CardTitle className="ds-display text-3xl">ملاكي</CardTitle>
+        <CardDescription className="pt-1 leading-relaxed">
+          أدخل كلمة السر للدخول إلى المنصة
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="space-y-4">
@@ -56,11 +58,11 @@ function UnlockForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="كلمة السر"
             autoFocus
-            className="text-center text-lg"
+            className="h-12 text-center text-base"
             disabled={isPending}
           />
           {error && (
-            <p className="rounded-md bg-destructive/10 p-2 text-center text-sm text-destructive">
+            <p className="rounded-md border border-danger-500/30 bg-danger-100/70 p-2 text-center text-sm text-danger-500">
               {error}
             </p>
           )}
@@ -82,8 +84,8 @@ function UnlockForm() {
 
 export default function UnlockPage() {
   return (
-    <div className="gradient-navy-gold flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={<div className="text-white">جاري التحميل…</div>}>
+    <div className="gradient-signature flex min-h-screen items-center justify-center p-4">
+      <Suspense fallback={<div className="text-paper-50">جاري التحميل…</div>}>
         <UnlockForm />
       </Suspense>
     </div>

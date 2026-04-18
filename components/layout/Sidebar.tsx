@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -14,15 +14,17 @@ export function Sidebar({ mode }: { mode: Mode }) {
   const cfg = getModeConfigByMode(mode);
 
   return (
-    <aside className="flex h-full w-full flex-col border-l bg-card/50">
-      <div className="border-b p-4">
-        <Link href="/" className="mb-4 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Sparkles className="h-5 w-5" />
+    <aside className="flex h-full w-full flex-col border-l border-border bg-paper-100/80 backdrop-blur-md">
+      <div className="border-b border-border p-4">
+        <Link href="/" className="mb-4 flex items-center gap-3" aria-label="ملاكي">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink-900 text-gold-400 shadow-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" />
+            </svg>
           </div>
-          <div>
-            <h2 className="font-bold leading-none">ملاكي</h2>
-            <p className="text-xs text-muted-foreground">Malaky AI</p>
+          <div className="leading-tight">
+            <h2 className="text-lg font-bold text-foreground">ملاكي</h2>
+            <p className="ds-meta">Malaky AI</p>
           </div>
         </Link>
         <ModeSwitch />
@@ -39,17 +41,15 @@ export function Sidebar({ mode }: { mode: Mode }) {
 
       <Separator />
 
-      <div className="px-3 pb-1 pt-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {cfg.nameAr}
-      </div>
+      <div className="px-4 pb-1 pt-3 ds-meta">{cfg.nameAr}</div>
 
-      <ScrollArea className="flex-1 chat-scroll">
+      <ScrollArea className="chat-scroll flex-1">
         <ConversationList mode={mode} slug={cfg.slug} />
       </ScrollArea>
 
       <Separator />
-      <div className="p-3 text-[11px] text-muted-foreground">
-        الحد اليومي: {cfg.limit} {cfg.limitUnit}
+      <div className="p-3 text-xs text-fg-subtle">
+        الحد اليومي: <span className="text-fg-muted">{cfg.limit}</span> {cfg.limitUnit}
       </div>
     </aside>
   );

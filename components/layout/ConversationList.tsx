@@ -61,7 +61,7 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-6 text-muted-foreground">
+      <div className="flex items-center justify-center py-6 text-fg-subtle">
         <Loader2 className="h-4 w-4 animate-spin" />
       </div>
     );
@@ -69,14 +69,14 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
 
   if (items.length === 0) {
     return (
-      <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+      <div className="px-4 py-6 text-center text-sm text-fg-subtle">
         لا توجد محادثات سابقة
       </div>
     );
   }
 
   return (
-    <ul className="space-y-1 p-1">
+    <ul className="space-y-1 p-2">
       {items.map((c) => {
         const href = `/${slug}/c/${c.id}`;
         const active = pathname === href;
@@ -85,14 +85,16 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
             <Link
               href={href}
               className={cn(
-                'group flex items-start gap-2 rounded-md px-2 py-2 text-sm transition-colors',
-                active ? 'bg-accent/20 text-foreground' : 'hover:bg-muted',
+                'group flex items-start gap-2 rounded-lg border px-3 py-2 text-sm transition-[background,border-color] duration-fast',
+                active
+                  ? 'border-gold-200 bg-gold-50 text-foreground'
+                  : 'border-transparent hover:bg-paper-200',
               )}
             >
-              <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-fg-subtle" />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{c.title ?? 'محادثة جديدة'}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="truncate font-medium leading-snug">{c.title ?? 'محادثة جديدة'}</p>
+                <p className="mt-0.5 text-xs text-fg-subtle">
                   {c.updated_at ? formatRelativeTime(c.updated_at) : ''}
                 </p>
               </div>

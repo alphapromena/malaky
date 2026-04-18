@@ -32,8 +32,8 @@ export function ImageResult({ image }: { image: ImageItem }) {
   }
 
   return (
-    <Card className="mx-auto my-4 max-w-2xl overflow-hidden">
-      <div className="relative aspect-square bg-muted" dir="ltr">
+    <Card className="mx-auto my-4 max-w-2xl overflow-hidden p-0 shadow-md">
+      <div className="relative aspect-square bg-paper-200" dir="ltr">
         <Image
           src={image.image_url}
           alt={image.arabic_prompt}
@@ -45,10 +45,12 @@ export function ImageResult({ image }: { image: ImageItem }) {
       </div>
       <CardContent className="space-y-3 p-4">
         <div className="flex items-start gap-2">
-          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-          <div className="flex-1 space-y-1">
-            <p className="text-sm font-medium">{image.arabic_prompt}</p>
-            <p className="font-inter text-xs text-muted-foreground" dir="ltr">
+          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-fg-subtle" />
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className="text-sm font-medium leading-snug text-foreground">
+              {image.arabic_prompt}
+            </p>
+            <p className="font-latin text-xs text-fg-subtle leading-relaxed" dir="ltr">
               {image.english_prompt}
             </p>
           </div>

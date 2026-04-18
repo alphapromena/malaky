@@ -38,11 +38,11 @@ export function ChatInput({
   }
 
   return (
-    <div className="border-t bg-background/80 backdrop-blur">
+    <div className="border-t border-border bg-paper-100/80 backdrop-blur-md">
       <div className="mx-auto w-full max-w-3xl p-3 sm:p-4">
         <div
           className={cn(
-            'flex items-end gap-2 rounded-xl border bg-card p-2 shadow-sm transition-shadow focus-within:shadow-md',
+            'flex items-end gap-2 rounded-xl border border-border bg-paper-50 p-2 shadow-sm transition-shadow duration-normal ease-out focus-within:border-gold-400 focus-within:shadow-md',
             disabled && 'opacity-60',
           )}
         >
@@ -52,7 +52,7 @@ export function ChatInput({
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKey}
             placeholder={placeholder}
-            className="min-h-[52px] resize-none border-0 bg-transparent shadow-none focus-visible:ring-0"
+            className="min-h-[52px] resize-none border-0 bg-transparent px-1 shadow-none focus:shadow-none focus:border-0 focus:ring-0"
             rows={2}
             disabled={disabled || submitting}
             dir="auto"
@@ -67,7 +67,7 @@ export function ChatInput({
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">
+        <p className="mt-2 text-center text-[11px] text-fg-subtle">
           {helperText ?? 'اضغط Ctrl/⌘ + Enter للإرسال'}
         </p>
       </div>

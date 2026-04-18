@@ -9,7 +9,10 @@ export type ModeConfig = {
   tagline: string;
   placeholder: string;
   icon: LucideIcon;
+  /** Tailwind gradient stops — RTL-safe direction applied at usage site. */
   accent: string;
+  /** Solid accent for chips / badges. */
+  swatch: string;
   limit: number;
   limitUnit: string;
 };
@@ -22,7 +25,8 @@ export const MODES: ModeConfig[] = [
     tagline: 'اكتب محتوى عربي يفهم لهجتك',
     placeholder: 'اكتب أي شي بدك الكاتب يساعدك فيه… (Ctrl/⌘ + Enter للإرسال)',
     icon: PenLine,
-    accent: 'from-sky-500 to-indigo-600',
+    accent: 'from-ink-900 to-ink-700',
+    swatch: 'bg-ink-900',
     limit: 20,
     limitUnit: 'رسالة',
   },
@@ -33,7 +37,8 @@ export const MODES: ModeConfig[] = [
     tagline: 'كود بالإنجليزية، شرح بالعربية',
     placeholder: 'اسأل عن الكود، اكتب بالعربي أو بالعربيزي (2, 3, 5, 7…)',
     icon: Code2,
-    accent: 'from-emerald-500 to-teal-600',
+    accent: 'from-ink-800 to-gold-600',
+    swatch: 'bg-gold-600',
     limit: 10,
     limitUnit: 'رسالة',
   },
@@ -44,7 +49,8 @@ export const MODES: ModeConfig[] = [
     tagline: 'وصف بالعربي، صورة فورية',
     placeholder: 'صف الصورة التي تريد: مثال «قهوة عربية فوق طاولة خشبية قديمة، ضوء ذهبي…»',
     icon: Palette,
-    accent: 'from-amber-500 to-rose-600',
+    accent: 'from-terracotta-500 to-gold-400',
+    swatch: 'bg-terracotta-500',
     limit: 5,
     limitUnit: 'صورة',
   },

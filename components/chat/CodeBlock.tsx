@@ -20,14 +20,19 @@ export function CodeBlock({ language, value }: { language: string; value: string
   }
 
   return (
-    <div className="group relative my-3 overflow-hidden rounded-lg border bg-[#1e1e1e]" dir="ltr">
-      <div className="flex items-center justify-between border-b border-white/10 px-3 py-1.5">
-        <span className="font-inter text-xs text-white/60">{language || 'code'}</span>
+    <div
+      className="group relative my-3 overflow-hidden rounded-xl border border-ink-700 bg-ink-900"
+      dir="ltr"
+    >
+      <div className="flex items-center justify-between border-b border-ink-700 bg-ink-800 px-3 py-1.5">
+        <span className="font-mono text-xs tracking-wide text-paper-50/60">
+          {language || 'code'}
+        </span>
         <Button
           variant="ghost"
           size="sm"
           onClick={copy}
-          className="h-7 gap-1.5 px-2 text-white/70 hover:bg-white/10 hover:text-white"
+          className="h-7 gap-1.5 px-2 text-paper-50/70 hover:bg-white/10 hover:text-gold-300"
         >
           {copied ? (
             <>
@@ -43,7 +48,7 @@ export function CodeBlock({ language, value }: { language: string; value: string
       <SyntaxHighlighter
         language={language || 'text'}
         style={vscDarkPlus}
-        customStyle={{ margin: 0, background: 'transparent', fontSize: 13 }}
+        customStyle={{ margin: 0, background: 'transparent', fontSize: 13, padding: 16 }}
         PreTag="div"
       >
         {value}

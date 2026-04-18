@@ -69,43 +69,42 @@ export function DesignerStream({
   const isEmpty = images.length === 0 && prompts.length === 0;
 
   return (
-    <div className="flex h-full flex-col">
-      <ScrollArea className="flex-1 chat-scroll">
+    <div className="flex h-full flex-col bg-paper-100">
+      <ScrollArea className="chat-scroll flex-1">
         {isEmpty ? (
           <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center">
             <div
-              className={`mb-4 rounded-full bg-gradient-to-br ${cfg.accent} p-4 text-white shadow-lg`}
+              className={`mb-5 rounded-2xl bg-gradient-to-bl ${cfg.accent} p-5 text-paper-50 shadow-lg`}
             >
               <Palette className="h-8 w-8" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold">{cfg.nameAr}</h2>
-            <p className="mb-6 text-muted-foreground text-balance">{cfg.tagline}</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3 w-3" />
-              اكتب وصف الصورة بالعربي في الأسفل
-            </div>
+            <h2 className="ds-display mb-2 text-3xl">{cfg.nameAr}</h2>
+            <p className="mb-8 max-w-sm text-pretty text-base text-fg-muted leading-relaxed">
+              {cfg.tagline}
+            </p>
+            <div className="text-xs text-fg-subtle">اكتب وصف الصورة بالعربي في الأسفل</div>
           </div>
         ) : (
           <div className="mx-auto w-full max-w-3xl px-3 py-6 sm:px-6">
             <ul className="space-y-6">
               {prompts.map((p, idx) => (
-                <li key={p.id} className="space-y-3">
-                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm">
-                    <div className="mb-1 text-xs font-medium text-muted-foreground">أنت</div>
-                    <p className="whitespace-pre-wrap">{p.arabic_prompt}</p>
+                <li key={p.id} className="space-y-3 animate-fade-in">
+                  <div className="rounded-xl border border-ink-900/10 bg-ink-900/[0.04] px-4 py-3 text-sm">
+                    <div className="mb-1 text-xs font-medium text-fg-subtle">أنت</div>
+                    <p className="whitespace-pre-wrap leading-relaxed">{p.arabic_prompt}</p>
                   </div>
                   {images[idx] && <ImageResult image={images[idx]!} />}
                 </li>
               ))}
               {submitting && (
-                <li className="flex items-center gap-3 rounded-xl border bg-muted/40 p-4 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                <li className="flex items-center gap-3 rounded-xl border border-border bg-paper-50 px-4 py-3 text-sm text-fg-muted shadow-sm">
+                  <Loader2 className="h-4 w-4 animate-spin text-gold-500" />
                   جاري توليد الصورة… قد يستغرق هذا حتى 30 ثانية
                 </li>
               )}
             </ul>
             {error && (
-              <div className="my-4 flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="my-4 flex items-start gap-2 rounded-lg border border-danger-500/30 bg-danger-100/70 p-3 text-sm text-danger-500">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>

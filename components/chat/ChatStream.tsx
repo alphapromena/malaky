@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { ChatInput } from './ChatInput';
 import { MessageList, type UiMessage } from './MessageList';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -144,17 +144,17 @@ export function ChatStream({
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <ScrollArea className="flex-1 chat-scroll">
+    <div className="flex h-full flex-col bg-paper-100">
+      <ScrollArea className="chat-scroll flex-1">
         {messages.length === 0 ? (
           <EmptyState mode={mode} />
         ) : (
           <>
             <MessageList messages={messages} />
             {error && (
-              <div className="mx-auto my-4 flex max-w-3xl items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="mx-auto my-4 flex max-w-3xl items-start gap-2 rounded-lg border border-danger-500/30 bg-danger-100/70 p-3 text-sm text-danger-500">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{error}</span>
+                <span className="leading-relaxed">{error}</span>
               </div>
             )}
             <div ref={bottomRef} className="h-4" />
@@ -180,15 +180,16 @@ function EmptyState({ mode }: { mode: Mode }) {
   const Icon = cfg.icon;
   return (
     <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center">
-      <div className={`mb-4 rounded-full bg-gradient-to-br ${cfg.accent} p-4 text-white shadow-lg`}>
+      <div
+        className={`mb-5 rounded-2xl bg-gradient-to-bl ${cfg.accent} p-5 text-paper-50 shadow-lg`}
+      >
         <Icon className="h-8 w-8" />
       </div>
-      <h2 className="mb-2 text-2xl font-bold">{cfg.nameAr}</h2>
-      <p className="mb-6 text-muted-foreground text-balance">{cfg.tagline}</p>
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Loader2 className="h-3 w-3" />
-        ابدأ بكتابة رسالتك في الأسفل
-      </div>
+      <h2 className="ds-display mb-2 text-3xl">{cfg.nameAr}</h2>
+      <p className="mb-8 max-w-sm text-pretty text-base text-fg-muted leading-relaxed">
+        {cfg.tagline}
+      </p>
+      <div className="text-xs text-fg-subtle">ابدأ بكتابة رسالتك في الأسفل</div>
     </div>
   );
 }

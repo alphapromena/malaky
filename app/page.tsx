@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,25 +7,26 @@ import { MODES } from '@/lib/modes';
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen">
-      {/* Hero */}
-      <section className="gradient-navy-gold relative overflow-hidden">
-        <div className="mx-auto max-w-5xl px-4 py-20 text-center text-white sm:py-28">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5 text-gold" />
-            <span>مساعدك الذكي بالعربي</span>
+    <main className="min-h-screen bg-paper-100">
+      {/* Hero — signature navy→gold gradient */}
+      <section className="gradient-signature relative overflow-hidden">
+        <div className="mx-auto max-w-5xl px-6 py-20 text-center text-paper-50 sm:py-28">
+          <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs backdrop-blur-md">
+            <Sparkles className="h-3.5 w-3.5 text-gold-300" />
+            <span className="text-paper-50/90">مساعدك الذكي بالعربي</span>
           </div>
-          <h1 className="mb-6 text-balance text-4xl font-bold leading-tight sm:text-6xl">
+
+          <h1 className="ds-display mb-6 text-5xl sm:text-6xl md:text-7xl">
             ملاكي
-            <br />
-            <span className="bg-gradient-to-l from-gold to-amber-200 bg-clip-text text-transparent">
-              ثلاثة أوضاع. حكاية واحدة.
-            </span>
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-balance text-lg text-white/80 sm:text-xl">
-            كاتب يفهم لهجتك، مبرمج يجاوبك بالعربي، ومصمم يولّد صورك من وصف عربي فقط. كل هذا في مكان
-            واحد.
+          <p className="ds-display mx-auto mb-10 max-w-2xl text-balance text-xl italic text-gold-200 sm:text-2xl">
+            ثلاثة أوضاع. حكاية واحدة.
           </p>
+
+          <p className="mx-auto mb-12 max-w-xl text-balance text-base leading-relaxed text-paper-50/75 sm:text-lg">
+            كاتب يفهم لهجتك، مبرمج يجاوبك بالعربي، ومصمم يولّد صورك من وصف عربي فقط.
+          </p>
+
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Button asChild size="lg" variant="gold" className="text-base">
               <Link href="/writer">
@@ -32,12 +34,7 @@ export default function LandingPage() {
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-            >
+            <Button asChild size="lg" variant="onDark">
               <Link href="#modes">استكشف الأوضاع</Link>
             </Button>
           </div>
@@ -45,10 +42,11 @@ export default function LandingPage() {
       </section>
 
       {/* Modes */}
-      <section id="modes" className="container py-16 sm:py-24">
-        <div className="mb-10 text-center">
-          <h2 className="mb-3 text-3xl font-bold sm:text-4xl">اختر وضعك المفضّل</h2>
-          <p className="mx-auto max-w-xl text-muted-foreground">
+      <section id="modes" className="container py-20 sm:py-28">
+        <div className="mb-12 text-center">
+          <p className="ds-meta mb-4">الأوضاع</p>
+          <h2 className="ds-display mb-4 text-3xl sm:text-4xl">اختر وضعك المفضّل</h2>
+          <p className="mx-auto max-w-xl text-base leading-relaxed text-fg-muted">
             كل وضع يستخدم نموذج ذكاء مختلف مُصمَّم خصيصاً للمهمة التي بين يديك.
           </p>
         </div>
@@ -57,23 +55,23 @@ export default function LandingPage() {
           {MODES.map((m) => {
             const Icon = m.icon;
             return (
-              <Link key={m.slug} href={`/${m.slug}`} className="group">
-                <Card className="h-full transition-all hover:-translate-y-1 hover:border-accent hover:shadow-lg">
+              <Link key={m.slug} href={`/${m.slug}`} className="group block">
+                <Card className="h-full hover:-translate-y-0.5 hover:shadow-md">
                   <CardHeader>
                     <div
-                      className={`mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${m.accent} text-white shadow-md`}
+                      className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-bl ${m.accent} text-paper-50 shadow-sm`}
                     >
                       <Icon className="h-6 w-6" />
                     </div>
-                    <CardTitle className="text-xl">{m.nameAr}</CardTitle>
-                    <CardDescription>{m.tagline}</CardDescription>
+                    <CardTitle className="text-2xl">{m.nameAr}</CardTitle>
+                    <CardDescription className="pt-1">{m.tagline}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="mb-4 text-sm text-muted-foreground">
+                    <p className="mb-4 text-sm text-fg-muted">
                       حدّ يومي: <span className="font-medium text-foreground">{m.limit}</span>{' '}
                       {m.limitUnit}
                     </p>
-                    <div className="flex items-center gap-1 text-sm font-medium text-accent-foreground/90 group-hover:gap-2 group-hover:text-accent transition-all">
+                    <div className="flex items-center gap-1 text-sm font-medium text-gold-700 transition-[gap] duration-normal ease-out group-hover:gap-2">
                       افتح الوضع
                       <ArrowLeft className="h-4 w-4" />
                     </div>
@@ -86,10 +84,18 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 py-8">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>
-            صُنع بـ ♥ في عمّان · تطوير قصي كنعان · {new Date().getFullYear()}
+      <footer className="border-t border-border bg-paper-200/40 py-10">
+        <div className="container flex flex-col items-center gap-3 text-sm text-fg-muted">
+          <Image
+            src="/brand/wordmark.svg"
+            alt="Malaky"
+            width={140}
+            height={36}
+            className="opacity-80"
+          />
+          <p className="text-pretty">
+            صُنع بـ <span className="text-terracotta-500">♥</span> في عمّان · تطوير قصي كنعان ·{' '}
+            {new Date().getFullYear()}
           </p>
         </div>
       </footer>
