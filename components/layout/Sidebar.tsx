@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, Plug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ModeSwitch } from './ModeSwitch';
@@ -8,11 +8,23 @@ import { UserMenu } from '@/components/auth/UserMenu';
 import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 import { getAuthUser } from '@/lib/auth';
+import { getServerClient } from '@/lib/supabase/server';
 import type { Mode } from '@/types/database';
 
 export async function Sidebar({ mode }: { mode: Mode }) {
   const cfg = getModeConfigByMode(mode);
   const auth = await getAuthUser();
+
+  let connectedCount = 0;
+  if (auth) {
+    const supabase = getServerClient();
+    const { count } = await supabase
+      .from('user_integrations')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', auth.user.id)
+      .eq('status', 'connected');
+    connectedCount = count ?? 0;
+  }
 
   return (
     <aside className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-canvas-elevated/60 backdrop-blur-2xl">
@@ -50,14 +62,31 @@ export async function Sidebar({ mode }: { mode: Mode }) {
         <ConversationList mode={mode} slug={cfg.slug} />
       </ScrollArea>
 
-      {/* User + limit footer */}
-      <div className="space-y-3 border-t border-border p-4">
+      {/* User + integrations + limit footer */}
+      <div className="space-y-2 border-t border-border p-4">
+        <Link
+          href="/settings/integrations"
+          className="flex items-center justify-between rounded-xl border border-border bg-white/[0.03] px-3 py-2 text-xs transition-colors hover:bg-white/[0.06] hover:border-gold-400/40"
+        >
+          <span className="flex items-center gap-2 text-ink-muted">
+            <Plug className="h-3.5 w-3.5" />
+            التكاملات
+          </span>
+          <span className="font-medium text-foreground">
+            {connectedCount}{' '}
+            <span className="text-ink-subtle">
+              {connectedCount === 1 ? 'متصل' : 'متصلة'}
+            </span>
+          </span>
+        </Link>
+
         <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-xs">
           <span className="text-ink-muted">الحد اليومي</span>
           <span className="font-medium text-foreground">
             {cfg.limit} <span className="text-ink-subtle">{cfg.limitUnit}</span>
           </span>
         </div>
+
         {auth?.profile && auth.user.email && (
           <UserMenu
             firstName={auth.profile.first_name}

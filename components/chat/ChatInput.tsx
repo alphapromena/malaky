@@ -1,7 +1,16 @@
 'use client';
 
 import { useRef, useState, type KeyboardEvent, type ChangeEvent } from 'react';
-import { FileText, Image as ImageIcon, Loader2, Paperclip, Send, X } from 'lucide-react';
+import Link from 'next/link';
+import {
+  FileText,
+  Image as ImageIcon,
+  Loader2,
+  Paperclip,
+  Plug,
+  Send,
+  X,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
@@ -10,8 +19,10 @@ export type AttachmentFile = File;
 
 export const ACCEPTED_MIMES =
   'image/png,image/jpeg,image/webp,image/gif,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-export const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20 MB
+export const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export const MAX_FILES = 5;
+
+export type ActiveIntegration = { id: string; name: string; nameAr: string };
 
 function humanSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -31,6 +42,7 @@ export function ChatInput({
   submitting,
   helperText,
   allowAttachments = true,
+  activeIntegrations = [],
 }: {
   placeholder: string;
   disabled?: boolean;
@@ -38,6 +50,7 @@ export function ChatInput({
   submitting: boolean;
   helperText?: string;
   allowAttachments?: boolean;
+  activeIntegrations?: ActiveIntegration[];
 }) {
   const [value, setValue] = useState('');
   const [files, setFiles] = useState<AttachmentFile[]>([]);
@@ -46,7 +59,6 @@ export function ChatInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleKey(e: KeyboardEvent<HTMLTextAreaElement>) {
-    // Enter submits; Shift+Enter inserts a newline.
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       fire();
@@ -92,6 +104,24 @@ export function ChatInput({
   return (
     <div className="border-t border-border bg-canvas-elevated/40 backdrop-blur-xl">
       <div className="mx-auto w-full max-w-3xl p-3 sm:p-5">
+        {activeIntegrations.length > 0 && (
+          <div className="mb-2 flex flex-wrap items-center justify-center gap-1.5">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-ink-subtle">
+              التكاملات النشطة:
+            </span>
+            {activeIntegrations.map((i) => (
+              <Link
+                key={i.id}
+                href={`/settings/integrations/${i.id}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-gold-400/30 bg-gold-400/10 px-2.5 py-0.5 text-[11px] font-medium text-gold-200 transition-colors hover:bg-gold-400/20"
+              >
+                <Plug className="h-3 w-3" />
+                {i.nameAr}
+              </Link>
+            ))}
+          </div>
+        )}
+
         <div
           className={cn(
             'group relative flex flex-col gap-2 rounded-2xl border border-border bg-white/[0.04] p-2.5 transition-all duration-normal ease-out',
@@ -99,7 +129,6 @@ export function ChatInput({
             disabled && 'opacity-60',
           )}
         >
-          {/* Attachment chips */}
           {files.length > 0 && (
             <ul className="flex flex-wrap gap-2 px-1 pt-1" aria-label="المرفقات">
               {files.map((f, i) => {
@@ -130,7 +159,6 @@ export function ChatInput({
             </ul>
           )}
 
-          {/* Input row */}
           <div className="flex items-end gap-2">
             {allowAttachments && (
               <>

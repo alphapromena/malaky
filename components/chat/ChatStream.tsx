@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
-import { ChatInput, type AttachmentFile } from './ChatInput';
+import { ChatInput, type AttachmentFile, type ActiveIntegration } from './ChatInput';
 import { MessageList, type UiMessage } from './MessageList';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { WingsLogo } from '@/components/brand/WingsLogo';
@@ -36,11 +36,25 @@ export function ChatStream({
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeIntegrations, setActiveIntegrations] = useState<ActiveIntegration[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages]);
+
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/integrations')
+      .then((r) => r.json())
+      .then((data: { connected?: ActiveIntegration[] }) => {
+        if (!ignore) setActiveIntegrations(data.connected ?? []);
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const endpoint = mode === 'WRITER' ? '/api/writer' : '/api/coder';
 
@@ -170,6 +184,7 @@ export function ChatStream({
         placeholder={cfg.placeholder}
         submitting={submitting}
         onSubmit={submit}
+        activeIntegrations={activeIntegrations}
         helperText={
           submitting
             ? 'جاري الإرسال…'
