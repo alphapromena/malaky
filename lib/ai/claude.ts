@@ -35,6 +35,7 @@ export async function streamClaude(params: {
   messages: ChatMessage[];
   maxTokens?: number;
   temperature?: number;
+  tools?: Anthropic.ToolUnion[];
   onToken?: (delta: string) => void;
 }) {
   const started = Date.now();
@@ -46,6 +47,7 @@ export async function streamClaude(params: {
     max_tokens: params.maxTokens ?? 4096,
     temperature: params.temperature ?? 0.7,
     messages: params.messages.map((m) => ({ role: m.role, content: m.content })),
+    ...(params.tools && params.tools.length > 0 ? { tools: params.tools } : {}),
   });
 
   let fullText = '';

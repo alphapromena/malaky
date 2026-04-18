@@ -12,6 +12,7 @@ import {
   isSupportedAttachment,
   processAttachment,
 } from '@/lib/ai/attachments';
+import { getConnectedProviders, toolsFor } from '@/lib/integrations/runtime';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -159,12 +160,16 @@ export async function POST(req: Request) {
           ),
         );
 
+        const connected = await getConnectedProviders(supabase, user.id);
+        const tools = toolsFor(connected);
+
         const result = await streamClaude({
           model: WRITER_MODEL,
           system: writerSystemPrompt(dialect, profile),
           messages: [...historyMessages, { role: 'user', content: userContent }],
           maxTokens: 4096,
           temperature: 0.7,
+          tools,
           onToken: (delta) => {
             controller.enqueue(encoder.encode(`event: token\ndata: ${JSON.stringify(delta)}\n\n`));
           },

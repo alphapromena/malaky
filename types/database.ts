@@ -184,6 +184,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_integrations: {
+        Row: {
+          id: string;
+          user_id: string;
+          provider: string;
+          status: string;
+          config: Json | null;
+          connected_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          provider: string;
+          status?: string;
+          config?: Json | null;
+          connected_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          provider?: string;
+          status?: string;
+          config?: Json | null;
+          connected_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -198,5 +228,6 @@ export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Conversation = Database['public']['Tables']['conversations']['Row'];
 export type Message = Database['public']['Tables']['messages']['Row'];
 export type GeneratedImage = Database['public']['Tables']['generated_images']['Row'];
+export type UserIntegration = Database['public']['Tables']['user_integrations']['Row'];
 
 export type Dialect = 'MSA' | 'LEVANTINE' | 'GULF' | 'EGYPTIAN' | 'MAGHREBI';
