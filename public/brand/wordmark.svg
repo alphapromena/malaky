@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" width="280" height="72">
+  <style>
+    .ar { font: 700 30px 'IBM Plex Sans Arabic', system-ui, sans-serif; fill: #0F1729; }
+    .en { font: 500 11px 'Inter', system-ui, sans-serif; fill: #8B8372; letter-spacing: 0.08em; }
+  </style>
+  <g>
+    <rect x="0" y="12" width="48" height="48" rx="12" fill="#0F1729"/>
+    <path d="M24 22 L26 32 L36 34 L26 36 L24 46 L22 36 L12 34 L22 32 Z" fill="#B8956A"/>
+  </g>
+  <text x="62" y="44" class="ar" direction="rtl">ملاكي</text>
+  <text x="62" y="60" class="en">Malaky AI</text>
+</svg>

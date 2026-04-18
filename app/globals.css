@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Malaky — Modern 2026
+   Dark-first, glass surfaces, vibrant accents, bold type.
+   Inspired by Linear, Raycast, Vercel, Arc.
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* ---------- Canvas ---------- */
+    --bg-primary:    #07070B;
+    --bg-elevated:   #0F0F14;
+    --bg-raised:     #16161D;
+    --bg-overlay:    #1B1B24;
+
+    /* Glass layer — on top of background with blur */
+    --glass:         rgba(255, 255, 255, 0.04);
+    --glass-strong:  rgba(255, 255, 255, 0.07);
+
+    /* ---------- Borders ---------- */
+    --border:        rgba(255, 255, 255, 0.08);
+    --border-hover:  rgba(255, 255, 255, 0.14);
+    --border-strong: rgba(255, 255, 255, 0.18);
+
+    /* ---------- Text ---------- */
+    --fg:            #F5F5F7;
+    --fg-muted:      #A1A1AA;
+    --fg-subtle:     #71717A;
+    --fg-inverse:    #0A0A0F;
+
+    /* ---------- Accent — Indigo → Violet → Pink ---------- */
+    --accent-1:      #6366F1;   /* indigo-500 */
+    --accent-2:      #8B5CF6;   /* violet-500 */
+    --accent-3:      #EC4899;   /* pink-500 */
+    --accent-glow:   rgba(139, 92, 246, 0.45);
+    --accent-ring:   rgba(139, 92, 246, 0.35);
+
+    /* Mode accents */
+    --writer-1:      #10B981;  /* emerald */
+    --writer-2:      #06B6D4;  /* cyan */
+    --coder-1:       #8B5CF6;  /* violet */
+    --coder-2:       #6366F1;  /* indigo */
+    --designer-1:    #EC4899;  /* pink */
+    --designer-2:    #F97316;  /* orange */
+
+    /* ---------- Semantic ---------- */
+    --success:       #22C55E;
+    --warning:       #F59E0B;
+    --danger:        #EF4444;
+
+    /* ---------- shadcn bridge ---------- */
+    --background:    var(--bg-primary);
+    --foreground:    var(--fg);
+    --card:          var(--bg-elevated);
+    --card-foreground: var(--fg);
+    --popover:       var(--bg-raised);
+    --popover-foreground: var(--fg);
+    --primary:       var(--fg);
+    --primary-foreground: var(--bg-primary);
+    --secondary:     var(--bg-raised);
+    --secondary-foreground: var(--fg);
+    --muted:         var(--bg-elevated);
+    --muted-foreground: var(--fg-muted);
+    --accent:        var(--accent-2);
+    --accent-foreground: var(--fg);
+    --destructive:   var(--danger);
+    --destructive-foreground: var(--fg);
+    --input:         var(--border);
+    --ring:          var(--accent-2);
+    --radius:        1rem;       /* 16px */
+
+    /* ---------- Shadows — colored glow ---------- */
+    --shadow-sm:     0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md:     0 8px 24px -8px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg:     0 20px 48px -16px rgba(0, 0, 0, 0.6), 0 8px 16px -8px rgba(0, 0, 0, 0.35);
+    --shadow-xl:     0 32px 64px -24px rgba(0, 0, 0, 0.7);
+    --shadow-glow:   0 0 0 1px rgba(139, 92, 246, 0.3), 0 10px 40px -10px rgba(139, 92, 246, 0.5);
+
+    /* ---------- Motion ---------- */
+    --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --duration-fast:   150ms;
+    --duration-normal: 240ms;
+    --duration-slow:   420ms;
+  }
+
+  /* ---------- Global ---------- */
+  * { border-color: var(--border); }
+
+  html {
+    direction: rtl;
+    color-scheme: dark;
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'kern' 1, 'ss01' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--fg);
+    font-family: var(--font-arabic), var(--font-latin), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(139, 92, 246, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(236, 72, 153, 0.08), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  code, pre, kbd, samp, [dir='ltr'] {
+    font-family: var(--font-mono), var(--font-latin), ui-monospace, monospace;
+  }
+
+  svg.lucide { stroke-width: 1.75; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-2);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  ::selection {
+    background: var(--accent-2);
+    color: #fff;
+  }
+}
+
+@layer components {
+  /* ---------- Glass surface ---------- */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid var(--border);
+  }
+
+  .glass-strong {
+    background: var(--glass-strong);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid var(--border);
+  }
+
+  /* ---------- Signature gradient (hero) ---------- */
+  .gradient-hero {
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 40%, #EC4899 80%, #F97316 100%);
+  }
+
+  /* Animated aurora orbs for hero backgrounds */
+  .aurora {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .aurora::before,
+  .aurora::after {
+    content: '';
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: float 18s ease-in-out infinite;
+  }
+  .aurora::before {
+    width: 40rem; height: 40rem;
+    top: -10rem; inset-inline-start: -10rem;
+    background: radial-gradient(circle, #6366F1, transparent 70%);
+  }
+  .aurora::after {
+    width: 32rem; height: 32rem;
+    bottom: -8rem; inset-inline-end: -8rem;
+    background: radial-gradient(circle, #EC4899, transparent 70%);
+    animation-delay: -9s;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(4rem, -2rem) scale(1.1); }
+    66%      { transform: translate(-3rem, 3rem) scale(0.95); }
+  }
+
+  /* ---------- Display type ---------- */
+  .ds-display {
+    font-family: var(--font-display), var(--font-arabic), system-ui, sans-serif;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+    font-weight: 700;
+  }
+  .ds-display-ar {
+    font-family: var(--font-arabic), serif;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  .ds-meta {
+    font-family: var(--font-latin), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--fg-subtle);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #A5B4FC, #F9A8D4, #FDBA74);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Scrollbar (thin, dark) */
+  .chat-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+  .chat-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+  .chat-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+}
+
+@layer utilities {
+  .streaming-cursor::after {
+    content: '▊';
+    display: inline-block;
+    margin-inline-start: 2px;
+    animation: blink 1s steps(1) infinite;
+    background: linear-gradient(135deg, #8B5CF6, #EC4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .glow-accent {
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.3),
+      0 0 32px -4px rgba(139, 92, 246, 0.5),
+      0 10px 40px -10px rgba(139, 92, 246, 0.35);
+  }
+  .glow-accent-sm {
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.25),
+      0 0 20px -4px rgba(139, 92, 246, 0.35);
+  }
+
+  .bg-noise {
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1, 0 0 0 0 1, 0 0 0 0 1, 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
