@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="max-w-none leading-relaxed">
+    <div className="max-w-none leading-[1.8]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -17,7 +17,7 @@ export function Markdown({ children }: { children: string }) {
             if (inline) {
               return (
                 <code
-                  className="rounded-sm bg-paper-200 px-1.5 py-0.5 font-mono text-[0.88em] text-ink-800 border border-border"
+                  className="rounded-md border border-border bg-white/[0.06] px-1.5 py-0.5 font-mono text-[0.88em] text-violet-300"
                   dir="ltr"
                   {...props}
                 >
@@ -38,7 +38,7 @@ export function Markdown({ children }: { children: string }) {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-700 underline underline-offset-2 decoration-gold-300 hover:decoration-gold-500"
+                className="text-violet-400 underline underline-offset-2 decoration-violet-500/40 hover:text-violet-300 hover:decoration-violet-400"
                 {...props}
               >
                 {children}
@@ -61,30 +61,36 @@ export function Markdown({ children }: { children: string }) {
             );
           },
           p: ({ children }) => (
-            <p className="my-2 whitespace-pre-wrap leading-[1.75]">{children}</p>
+            <p className="my-2.5 whitespace-pre-wrap leading-[1.8]">{children}</p>
           ),
-          ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pe-5">{children}</ul>,
-          ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pe-5">{children}</ol>,
-          h1: ({ children }) => <h1 className="my-3 text-xl font-bold">{children}</h1>,
-          h2: ({ children }) => <h2 className="my-3 text-lg font-semibold">{children}</h2>,
-          h3: ({ children }) => <h3 className="my-2 text-base font-semibold">{children}</h3>,
+          ul: ({ children }) => <ul className="my-3 list-disc space-y-1.5 pe-5">{children}</ul>,
+          ol: ({ children }) => <ol className="my-3 list-decimal space-y-1.5 pe-5">{children}</ol>,
+          h1: ({ children }) => (
+            <h1 className="my-4 text-2xl font-bold tracking-tight">{children}</h1>
+          ),
+          h2: ({ children }) => (
+            <h2 className="my-3 text-xl font-semibold tracking-tight">{children}</h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="my-2.5 text-lg font-semibold">{children}</h3>
+          ),
           blockquote: ({ children }) => (
-            <blockquote className="my-3 border-e-2 border-gold-400 bg-gold-50/60 ps-4 pe-3 py-2 text-fg-muted italic">
+            <blockquote className="my-3 rounded-e-lg border-e-2 border-violet-500/60 bg-violet-500/5 ps-4 pe-3 py-2 text-ink-muted">
               {children}
             </blockquote>
           ),
           hr: () => <hr className="my-4 border-border" />,
           table: ({ children }) => (
-            <div className="my-3 overflow-x-auto">
-              <table className="min-w-full text-sm border-collapse">{children}</table>
+            <div className="my-3 overflow-x-auto rounded-lg border border-border">
+              <table className="min-w-full text-sm">{children}</table>
             </div>
           ),
           th: ({ children }) => (
-            <th className="border border-border bg-paper-200 px-3 py-1.5 text-start font-semibold">
+            <th className="border-b border-border bg-white/[0.04] px-3 py-2 text-start font-semibold">
               {children}
             </th>
           ),
-          td: ({ children }) => <td className="border border-border px-3 py-1.5">{children}</td>,
+          td: ({ children }) => <td className="border-t border-border px-3 py-2">{children}</td>,
         }}
       >
         {children}

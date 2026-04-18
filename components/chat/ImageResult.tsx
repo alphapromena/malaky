@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { Download, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 export type ImageItem = {
   id: string;
@@ -32,8 +31,8 @@ export function ImageResult({ image }: { image: ImageItem }) {
   }
 
   return (
-    <Card className="mx-auto my-4 max-w-2xl overflow-hidden p-0 shadow-md">
-      <div className="relative aspect-square bg-paper-200" dir="ltr">
+    <div className="mx-auto my-4 w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-white/[0.03] shadow-lg">
+      <div className="relative aspect-square bg-black/40" dir="ltr">
         <Image
           src={image.image_url}
           alt={image.arabic_prompt}
@@ -43,14 +42,14 @@ export function ImageResult({ image }: { image: ImageItem }) {
           sizes="(max-width: 768px) 100vw, 600px"
         />
       </div>
-      <CardContent className="space-y-3 p-4">
+      <div className="space-y-3 p-5">
         <div className="flex items-start gap-2">
-          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-fg-subtle" />
+          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-pink-400" />
           <div className="min-w-0 flex-1 space-y-1">
             <p className="text-sm font-medium leading-snug text-foreground">
               {image.arabic_prompt}
             </p>
-            <p className="font-latin text-xs text-fg-subtle leading-relaxed" dir="ltr">
+            <p className="font-latin text-xs text-ink-subtle leading-relaxed" dir="ltr">
               {image.english_prompt}
             </p>
           </div>
@@ -59,7 +58,7 @@ export function ImageResult({ image }: { image: ImageItem }) {
           <Download className="h-4 w-4" />
           تنزيل الصورة
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

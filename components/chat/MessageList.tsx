@@ -13,30 +13,32 @@ export type UiMessage = {
 
 export function MessageList({ messages }: { messages: UiMessage[] }) {
   return (
-    <div className="mx-auto w-full max-w-3xl px-3 py-6 sm:px-6">
-      <ul className="space-y-6">
+    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+      <ul className="space-y-7">
         {messages.map((m) => (
           <li key={m.id} className="flex gap-3 animate-fade-in">
             <div
               className={cn(
-                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm',
                 m.role === 'user'
-                  ? 'bg-ink-900 text-paper-50'
-                  : 'bg-gold-400 text-ink-900',
+                  ? 'bg-white/[0.06] text-foreground border border-border'
+                  : 'bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 text-white shadow-glow',
               )}
             >
               {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="mb-1 text-xs font-medium text-fg-subtle">
-                {m.role === 'user' ? 'أنت' : 'ملاكي'}
+              <div className="mb-1.5 flex items-center gap-2 text-[11px] font-medium">
+                <span className={cn(m.role === 'user' ? 'text-ink-muted' : 'text-gradient-accent font-semibold')}>
+                  {m.role === 'user' ? 'أنت' : 'ملاكي'}
+                </span>
               </div>
               <div
                 className={cn(
-                  'rounded-xl border px-4 py-3 text-sm leading-relaxed',
+                  'rounded-2xl px-5 py-4 text-sm leading-[1.8]',
                   m.role === 'user'
-                    ? 'border-ink-900/10 bg-ink-900/[0.04]'
-                    : 'border-border bg-paper-50 shadow-sm',
+                    ? 'border border-border bg-white/[0.03]'
+                    : 'border border-violet-500/15 bg-gradient-to-br from-violet-500/[0.06] to-pink-500/[0.04] shadow-sm',
                   m.streaming && 'streaming-cursor',
                 )}
               >

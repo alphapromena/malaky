@@ -2,10 +2,9 @@
 
 import { Suspense, useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Lock, Loader2 } from 'lucide-react';
+import { Lock, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 function UnlockForm() {
   const [password, setPassword] = useState('');
@@ -40,33 +39,53 @@ function UnlockForm() {
   }
 
   return (
-    <Card className="w-full max-w-md border-border/60 shadow-xl">
-      <CardHeader className="text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-50 text-gold-700 ring-1 ring-gold-200">
-          <Lock className="h-6 w-6" />
+    <div className="relative w-full max-w-md animate-scale-in">
+      {/* Glow halo */}
+      <div className="absolute -inset-8 rounded-[48px] bg-gradient-to-br from-indigo-500/20 via-violet-500/20 to-pink-500/20 opacity-60 blur-3xl" />
+
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-canvas-elevated/80 p-8 backdrop-blur-2xl shadow-xl sm:p-10">
+        {/* Brand mark */}
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="relative mb-5">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 blur-xl opacity-60 animate-pulse-glow" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 shadow-glow">
+              <Sparkles className="h-7 w-7 text-white" />
+            </div>
+          </div>
+          <h1 className="ds-display-ar text-4xl font-bold">ملاكي</h1>
+          <p className="mt-2 font-latin text-[11px] uppercase tracking-[0.25em] text-ink-subtle">
+            Malaky AI
+          </p>
         </div>
-        <CardTitle className="ds-display text-3xl">ملاكي</CardTitle>
-        <CardDescription className="pt-1 leading-relaxed">
-          أدخل كلمة السر للدخول إلى المنصة
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+
+        {/* Form */}
         <form onSubmit={submit} className="space-y-4">
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="كلمة السر"
-            autoFocus
-            className="h-12 text-center text-base"
-            disabled={isPending}
-          />
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-xs font-medium text-ink-muted">
+              <Lock className="h-3.5 w-3.5" />
+              كلمة السر
+            </label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              autoFocus
+              className="h-12 text-center text-lg tracking-widest"
+              disabled={isPending}
+            />
+          </div>
           {error && (
-            <p className="rounded-md border border-danger-500/30 bg-danger-100/70 p-2 text-center text-sm text-danger-500">
+            <p className="rounded-xl border border-danger/30 bg-danger/10 p-3 text-center text-sm text-danger">
               {error}
             </p>
           )}
-          <Button type="submit" className="w-full" size="lg" disabled={isPending || !password}>
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            disabled={isPending || !password}
+          >
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -77,15 +96,26 @@ function UnlockForm() {
             )}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+
+        <p className="mt-6 text-center text-[11px] text-ink-subtle">
+          بدخولك توافق على حفظ جلستك محلياً لمدة 7 أيام
+        </p>
+      </div>
+    </div>
   );
 }
 
 export default function UnlockPage() {
   return (
-    <div className="gradient-signature flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={<div className="text-paper-50">جاري التحميل…</div>}>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-canvas-base p-4">
+      <div className="aurora" />
+      <Suspense
+        fallback={
+          <div className="text-ink-muted">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        }
+      >
         <UnlockForm />
       </Suspense>
     </div>

@@ -21,18 +21,23 @@ export function CodeBlock({ language, value }: { language: string; value: string
 
   return (
     <div
-      className="group relative my-3 overflow-hidden rounded-xl border border-ink-700 bg-ink-900"
+      className="group relative my-3 overflow-hidden rounded-xl border border-border bg-black/50"
       dir="ltr"
     >
-      <div className="flex items-center justify-between border-b border-ink-700 bg-ink-800 px-3 py-1.5">
-        <span className="font-mono text-xs tracking-wide text-paper-50/60">
-          {language || 'code'}
-        </span>
+      <div className="flex items-center justify-between border-b border-border bg-white/[0.03] px-4 py-2">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-500/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-green-500/60" />
+          <span className="ms-3 font-mono text-xs tracking-wide text-ink-subtle">
+            {language || 'code'}
+          </span>
+        </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={copy}
-          className="h-7 gap-1.5 px-2 text-paper-50/70 hover:bg-white/10 hover:text-gold-300"
+          className="h-7 gap-1.5 px-2 text-ink-muted hover:bg-white/[0.06] hover:text-violet-300"
         >
           {copied ? (
             <>

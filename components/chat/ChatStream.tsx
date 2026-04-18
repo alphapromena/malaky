@@ -144,7 +144,7 @@ export function ChatStream({
   );
 
   return (
-    <div className="flex h-full flex-col bg-paper-100">
+    <div className="relative flex h-full flex-col">
       <ScrollArea className="chat-scroll flex-1">
         {messages.length === 0 ? (
           <EmptyState mode={mode} />
@@ -152,7 +152,7 @@ export function ChatStream({
           <>
             <MessageList messages={messages} />
             {error && (
-              <div className="mx-auto my-4 flex max-w-3xl items-start gap-2 rounded-lg border border-danger-500/30 bg-danger-100/70 p-3 text-sm text-danger-500">
+              <div className="mx-auto my-4 flex max-w-3xl items-start gap-2 rounded-xl border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span className="leading-relaxed">{error}</span>
               </div>
@@ -179,17 +179,23 @@ function EmptyState({ mode }: { mode: Mode }) {
   const cfg = getModeConfigByMode(mode);
   const Icon = cfg.icon;
   return (
-    <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center">
+    <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center animate-fade-in">
       <div
-        className={`mb-5 rounded-2xl bg-gradient-to-bl ${cfg.accent} p-5 text-paper-50 shadow-lg`}
+        className={`mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-white ${cfg.glow}`}
       >
-        <Icon className="h-8 w-8" />
+        <Icon className="h-9 w-9" />
       </div>
-      <h2 className="ds-display mb-2 text-3xl">{cfg.nameAr}</h2>
-      <p className="mb-8 max-w-sm text-pretty text-base text-fg-muted leading-relaxed">
+      <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-subtle">
+        <span className="font-latin">{cfg.nameEn}</span>
+        <span>·</span>
+        <span>{cfg.nameAr}</span>
+      </div>
+      <h2 className="ds-display mb-3 bg-gradient-to-br from-white to-white/60 bg-clip-text text-5xl text-transparent">
+        {cfg.nameAr}
+      </h2>
+      <p className="max-w-sm text-pretty text-base leading-relaxed text-ink-muted">
         {cfg.tagline}
       </p>
-      <div className="text-xs text-fg-subtle">ابدأ بكتابة رسالتك في الأسفل</div>
     </div>
   );
 }

@@ -61,7 +61,7 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-6 text-fg-subtle">
+      <div className="flex items-center justify-center py-6 text-ink-subtle">
         <Loader2 className="h-4 w-4 animate-spin" />
       </div>
     );
@@ -69,14 +69,16 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
 
   if (items.length === 0) {
     return (
-      <div className="px-4 py-6 text-center text-sm text-fg-subtle">
-        لا توجد محادثات سابقة
+      <div className="mx-4 my-6 rounded-xl border border-dashed border-border/80 px-4 py-8 text-center">
+        <MessageSquare className="mx-auto mb-3 h-5 w-5 text-ink-subtle" />
+        <p className="text-sm text-ink-muted">لا توجد محادثات بعد</p>
+        <p className="mt-1 text-xs text-ink-subtle">ابدأ محادثة جديدة لتظهر هنا</p>
       </div>
     );
   }
 
   return (
-    <ul className="space-y-1 p-2">
+    <ul className="space-y-1 p-3">
       {items.map((c) => {
         const href = `/${slug}/c/${c.id}`;
         const active = pathname === href;
@@ -85,16 +87,23 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
             <Link
               href={href}
               className={cn(
-                'group flex items-start gap-2 rounded-lg border px-3 py-2 text-sm transition-[background,border-color] duration-fast',
+                'group relative flex items-start gap-2.5 rounded-xl border px-3 py-2.5 text-sm transition-all duration-fast',
                 active
-                  ? 'border-gold-200 bg-gold-50 text-foreground'
-                  : 'border-transparent hover:bg-paper-200',
+                  ? 'border-violet-500/30 bg-violet-500/10 text-foreground shadow-[inset_0_0_0_1px_rgba(139,92,246,0.1)]'
+                  : 'border-transparent text-ink-muted hover:bg-white/[0.04] hover:text-foreground',
               )}
             >
-              <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-fg-subtle" />
+              <MessageSquare
+                className={cn(
+                  'mt-0.5 h-4 w-4 shrink-0',
+                  active ? 'text-violet-400' : 'text-ink-subtle',
+                )}
+              />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium leading-snug">{c.title ?? 'محادثة جديدة'}</p>
-                <p className="mt-0.5 text-xs text-fg-subtle">
+                <p className="truncate font-medium leading-snug">
+                  {c.title ?? 'محادثة جديدة'}
+                </p>
+                <p className="mt-0.5 text-[11px] text-ink-subtle">
                   {c.updated_at ? formatRelativeTime(c.updated_at) : ''}
                 </p>
               </div>

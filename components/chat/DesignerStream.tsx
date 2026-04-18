@@ -69,42 +69,49 @@ export function DesignerStream({
   const isEmpty = images.length === 0 && prompts.length === 0;
 
   return (
-    <div className="flex h-full flex-col bg-paper-100">
+    <div className="flex h-full flex-col">
       <ScrollArea className="chat-scroll flex-1">
         {isEmpty ? (
-          <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center">
+          <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center animate-fade-in">
             <div
-              className={`mb-5 rounded-2xl bg-gradient-to-bl ${cfg.accent} p-5 text-paper-50 shadow-lg`}
+              className={`mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-white ${cfg.glow}`}
             >
-              <Palette className="h-8 w-8" />
+              <Palette className="h-9 w-9" />
             </div>
-            <h2 className="ds-display mb-2 text-3xl">{cfg.nameAr}</h2>
-            <p className="mb-8 max-w-sm text-pretty text-base text-fg-muted leading-relaxed">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-subtle">
+              <span className="font-latin">{cfg.nameEn}</span>
+              <span>·</span>
+              <span>{cfg.nameAr}</span>
+            </div>
+            <h2 className="ds-display mb-3 bg-gradient-to-br from-white to-white/60 bg-clip-text text-5xl text-transparent">
+              {cfg.nameAr}
+            </h2>
+            <p className="max-w-sm text-pretty text-base leading-relaxed text-ink-muted">
               {cfg.tagline}
             </p>
-            <div className="text-xs text-fg-subtle">اكتب وصف الصورة بالعربي في الأسفل</div>
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-3xl px-3 py-6 sm:px-6">
-            <ul className="space-y-6">
+          <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+            <ul className="space-y-7">
               {prompts.map((p, idx) => (
                 <li key={p.id} className="space-y-3 animate-fade-in">
-                  <div className="rounded-xl border border-ink-900/10 bg-ink-900/[0.04] px-4 py-3 text-sm">
-                    <div className="mb-1 text-xs font-medium text-fg-subtle">أنت</div>
+                  <div className="rounded-2xl border border-border bg-white/[0.03] px-5 py-4 text-sm">
+                    <div className="mb-1 text-[11px] font-medium text-ink-muted">أنت</div>
                     <p className="whitespace-pre-wrap leading-relaxed">{p.arabic_prompt}</p>
                   </div>
                   {images[idx] && <ImageResult image={images[idx]!} />}
                 </li>
               ))}
               {submitting && (
-                <li className="flex items-center gap-3 rounded-xl border border-border bg-paper-50 px-4 py-3 text-sm text-fg-muted shadow-sm">
-                  <Loader2 className="h-4 w-4 animate-spin text-gold-500" />
-                  جاري توليد الصورة… قد يستغرق هذا حتى 30 ثانية
+                <li className="flex items-center gap-3 rounded-2xl border border-pink-500/20 bg-pink-500/5 px-5 py-4 text-sm">
+                  <Loader2 className="h-4 w-4 animate-spin text-pink-400" />
+                  <span className="text-ink-muted">جاري توليد الصورة…</span>
+                  <span className="ms-auto text-[11px] text-ink-subtle">~30 ثانية</span>
                 </li>
               )}
             </ul>
             {error && (
-              <div className="my-4 flex items-start gap-2 rounded-lg border border-danger-500/30 bg-danger-100/70 p-3 text-sm text-danger-500">
+              <div className="my-4 flex items-start gap-2 rounded-xl border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
@@ -120,7 +127,7 @@ export function DesignerStream({
         helperText={
           submitting
             ? 'جاري التوليد…'
-            : 'نصائح: صف العناصر، الألوان، المشاعر، والأسلوب الفني — كلما كان الوصف أدق، كانت الصورة أحسن'
+            : 'نصائح: صف العناصر، الألوان، المشاعر، والأسلوب الفني'
         }
       />
     </div>
