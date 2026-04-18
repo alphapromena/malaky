@@ -7,38 +7,69 @@ export type Json =
   | Json[];
 
 export type Database = {
-  __InternalSupabase: {
-    PostgrestVersion: '14.5';
-  };
+  __InternalSupabase: { PostgrestVersion: '14.5' };
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          age: number;
+          avatar_url: string | null;
+          created_at: string | null;
+          first_name: string;
+          id: string;
+          last_name: string;
+          terms_accepted_at: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          age: number;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          first_name: string;
+          id: string;
+          last_name: string;
+          terms_accepted_at?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          age?: number;
+          avatar_url?: string | null;
+          created_at?: string | null;
+          first_name?: string;
+          id?: string;
+          last_name?: string;
+          terms_accepted_at?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       conversations: {
         Row: {
           created_at: string | null;
           dialect_used: string | null;
           id: string;
           mode: string;
-          session_id: string;
           title: string | null;
           updated_at: string | null;
+          user_id: string;
         };
         Insert: {
           created_at?: string | null;
           dialect_used?: string | null;
           id?: string;
           mode: string;
-          session_id: string;
           title?: string | null;
           updated_at?: string | null;
+          user_id: string;
         };
         Update: {
           created_at?: string | null;
           dialect_used?: string | null;
           id?: string;
           mode?: string;
-          session_id?: string;
           title?: string | null;
           updated_at?: string | null;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -52,7 +83,7 @@ export type Database = {
           id: string;
           image_storage_path: string;
           image_url: string;
-          session_id: string;
+          user_id: string;
         };
         Insert: {
           arabic_prompt: string;
@@ -63,7 +94,7 @@ export type Database = {
           id?: string;
           image_storage_path: string;
           image_url: string;
-          session_id: string;
+          user_id: string;
         };
         Update: {
           arabic_prompt?: string;
@@ -74,7 +105,7 @@ export type Database = {
           id?: string;
           image_storage_path?: string;
           image_url?: string;
-          session_id?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -123,21 +154,21 @@ export type Database = {
           id: string;
           mode: string;
           reset_at: string | null;
-          session_id: string;
+          user_id: string;
         };
         Insert: {
           count?: number | null;
           id?: string;
           mode: string;
           reset_at?: string | null;
-          session_id: string;
+          user_id: string;
         };
         Update: {
           count?: number | null;
           id?: string;
           mode?: string;
           reset_at?: string | null;
-          session_id?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -151,6 +182,7 @@ export type Database = {
 
 export type Mode = 'WRITER' | 'CODER' | 'DESIGNER';
 
+export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Conversation = Database['public']['Tables']['conversations']['Row'];
 export type Message = Database['public']['Tables']['messages']['Row'];
 export type GeneratedImage = Database['public']['Tables']['generated_images']['Row'];

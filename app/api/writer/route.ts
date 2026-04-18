@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { getSessionId } from '@/lib/session';
+import { getServerClient } from '@/lib/supabase/server';
 import { getOrCreateConversation, saveMessage } from '@/lib/db';
 import { detectDialect } from '@/lib/arabic/dialect-detector';
 import { writerSystemPrompt } from '@/lib/ai/prompts';
 import { WRITER_MODEL, estimateCostUsd, streamClaude } from '@/lib/ai/claude';
 import { checkAndIncrementRateLimit } from '@/lib/rate-limit';
-import { getServiceClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -16,9 +15,18 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const sessionId = getSessionId();
+  const supabase = getServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return new Response(JSON.stringify({ error: 'يجب تسجيل الدخول.' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
-  const rate = await checkAndIncrementRateLimit(sessionId, 'WRITER');
+  const rate = await checkAndIncrementRateLimit(supabase, user.id, 'WRITER');
   if (!rate.allowed) {
     return new Response(
       JSON.stringify({
@@ -34,7 +42,6 @@ export async function POST(req: Request) {
   } catch {
     return new Response(JSON.stringify({ error: 'طلب غير صالح.' }), { status: 400 });
   }
-
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return new Response(JSON.stringify({ error: 'رسالتك فارغة أو طويلة جداً.' }), { status: 400 });
@@ -43,8 +50,8 @@ export async function POST(req: Request) {
   const { message, conversationId } = parsed.data;
   const dialect = detectDialect(message);
 
-  const conversation = await getOrCreateConversation({
-    sessionId,
+  const conversation = await getOrCreateConversation(supabase, {
+    userId: user.id,
     mode: 'WRITER',
     conversationId: conversationId ?? null,
     firstUserMessage: message,
@@ -52,23 +59,24 @@ export async function POST(req: Request) {
   });
 
   if (conversation.dialect_used !== dialect) {
-    await getServiceClient()
+    await supabase
       .from('conversations')
       .update({ dialect_used: dialect })
       .eq('id', conversation.id);
   }
 
-  const supabase = getServiceClient();
   const { data: history } = await supabase
     .from('messages')
     .select('role, content')
     .eq('conversation_id', conversation.id)
     .order('created_at', { ascending: true });
 
-  const historyMessages = (history ?? [])
-    .filter((m): m is { role: 'user' | 'assistant'; content: string } => m.role === 'user' || m.role === 'assistant');
+  const historyMessages = (history ?? []).filter(
+    (m): m is { role: 'user' | 'assistant'; content: string } =>
+      m.role === 'user' || m.role === 'assistant',
+  );
 
-  await saveMessage({ conversationId: conversation.id, role: 'user', content: message });
+  await saveMessage(supabase, { conversationId: conversation.id, role: 'user', content: message });
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -91,7 +99,7 @@ export async function POST(req: Request) {
           },
         });
 
-        await saveMessage({
+        await saveMessage(supabase, {
           conversationId: conversation.id,
           role: 'assistant',
           content: result.fullText,

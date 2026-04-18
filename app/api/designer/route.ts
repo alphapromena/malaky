@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getSessionId } from '@/lib/session';
+import { getAdminClient, getServerClient } from '@/lib/supabase/server';
 import { getOrCreateConversation, saveMessage } from '@/lib/db';
 import { translateArabicPromptToEnglish } from '@/lib/arabic/prompt-translator';
 import { generateImage, IMAGE_COST_USD, IMAGE_MODEL } from '@/lib/ai/gemini';
 import { checkAndIncrementRateLimit } from '@/lib/rate-limit';
-import { getServiceClient } from '@/lib/supabase/server';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -16,9 +15,15 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
-  const sessionId = getSessionId();
+  const supabase = getServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'يجب تسجيل الدخول.' }, { status: 401 });
+  }
 
-  const rate = await checkAndIncrementRateLimit(sessionId, 'DESIGNER');
+  const rate = await checkAndIncrementRateLimit(supabase, user.id, 'DESIGNER');
   if (!rate.allowed) {
     return NextResponse.json(
       {
@@ -41,24 +46,24 @@ export async function POST(req: Request) {
   }
 
   const { prompt, conversationId } = parsed.data;
-  const conversation = await getOrCreateConversation({
-    sessionId,
+  const conversation = await getOrCreateConversation(supabase, {
+    userId: user.id,
     mode: 'DESIGNER',
     conversationId: conversationId ?? null,
     firstUserMessage: prompt,
   });
 
-  await saveMessage({ conversationId: conversation.id, role: 'user', content: prompt });
+  await saveMessage(supabase, { conversationId: conversation.id, role: 'user', content: prompt });
 
   try {
     const translation = await translateArabicPromptToEnglish(prompt);
     const image = await generateImage(translation.englishPrompt);
 
-    const supabase = getServiceClient();
+    const admin = getAdminClient();
     const ext = image.mimeType.split('/')[1] ?? 'png';
-    const storagePath = `${sessionId}/${conversation.id}/${Date.now()}.${ext}`;
+    const storagePath = `${user.id}/${conversation.id}/${Date.now()}.${ext}`;
 
-    const upload = await supabase.storage
+    const upload = await admin.storage
       .from('malaky-images')
       .upload(storagePath, image.bytes, {
         contentType: image.mimeType,
@@ -69,13 +74,13 @@ export async function POST(req: Request) {
       throw new Error(`تعذّر رفع الصورة: ${upload.error.message}`);
     }
 
-    const { data: publicUrl } = supabase.storage.from('malaky-images').getPublicUrl(storagePath);
+    const { data: publicUrl } = admin.storage.from('malaky-images').getPublicUrl(storagePath);
 
     const { data: saved, error: insertErr } = await supabase
       .from('generated_images')
       .insert({
+        user_id: user.id,
         conversation_id: conversation.id,
-        session_id: sessionId,
         arabic_prompt: prompt,
         english_prompt: translation.englishPrompt,
         image_url: publicUrl.publicUrl,
@@ -94,7 +99,7 @@ export async function POST(req: Request) {
       translation.englishPrompt,
     ].join('\n');
 
-    await saveMessage({
+    await saveMessage(supabase, {
       conversationId: conversation.id,
       role: 'assistant',
       content: assistantContent,

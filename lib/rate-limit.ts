@@ -1,5 +1,7 @@
-import { getServiceClient } from '@/lib/supabase/server';
-import type { Mode } from '@/types/database';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database, Mode } from '@/types/database';
+
+type Client = SupabaseClient<Database>;
 
 export const DAILY_LIMITS: Record<Mode, number> = {
   WRITER: 20,
@@ -17,22 +19,24 @@ export type RateLimitResult = {
 };
 
 export async function checkAndIncrementRateLimit(
-  sessionId: string,
+  supabase: Client,
+  userId: string,
   mode: Mode,
 ): Promise<RateLimitResult> {
-  const supabase = getServiceClient();
   const limit = DAILY_LIMITS[mode];
   const now = new Date();
 
   const { data: existing } = await supabase
     .from('rate_limits')
     .select('*')
-    .eq('session_id', sessionId)
+    .eq('user_id', userId)
     .eq('mode', mode)
     .maybeSingle();
 
   let count = existing?.count ?? 0;
-  let resetAt = existing?.reset_at ? new Date(existing.reset_at) : new Date(now.getTime() + DAY_MS);
+  let resetAt = existing?.reset_at
+    ? new Date(existing.reset_at)
+    : new Date(now.getTime() + DAY_MS);
 
   if (!existing || resetAt.getTime() <= now.getTime()) {
     count = 0;
@@ -47,12 +51,12 @@ export async function checkAndIncrementRateLimit(
 
   await supabase.from('rate_limits').upsert(
     {
-      session_id: sessionId,
+      user_id: userId,
       mode,
       count: newCount,
       reset_at: resetAt.toISOString(),
     },
-    { onConflict: 'session_id,mode' },
+    { onConflict: 'user_id,mode' },
   );
 
   return { allowed: true, remaining: limit - newCount, limit, resetAt };

@@ -1,22 +1,25 @@
-import { getServiceClient } from '@/lib/supabase/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database, Mode } from '@/types/database';
 import { generateTitle } from '@/lib/utils';
-import type { Mode } from '@/types/database';
 
-export async function getOrCreateConversation(params: {
-  sessionId: string;
-  mode: Mode;
-  conversationId?: string | null;
-  firstUserMessage?: string;
-  dialectUsed?: string | null;
-}) {
-  const supabase = getServiceClient();
+type Client = SupabaseClient<Database>;
 
+export async function getOrCreateConversation(
+  supabase: Client,
+  params: {
+    userId: string;
+    mode: Mode;
+    conversationId?: string | null;
+    firstUserMessage?: string;
+    dialectUsed?: string | null;
+  },
+) {
   if (params.conversationId) {
     const { data, error } = await supabase
       .from('conversations')
       .select('*')
       .eq('id', params.conversationId)
-      .eq('session_id', params.sessionId)
+      .eq('user_id', params.userId)
       .maybeSingle();
     if (error) throw error;
     if (data) return data;
@@ -25,7 +28,7 @@ export async function getOrCreateConversation(params: {
   const { data: created, error: insertErr } = await supabase
     .from('conversations')
     .insert({
-      session_id: params.sessionId,
+      user_id: params.userId,
       mode: params.mode,
       title: params.firstUserMessage ? generateTitle(params.firstUserMessage) : null,
       dialect_used: params.dialectUsed ?? null,
@@ -37,17 +40,19 @@ export async function getOrCreateConversation(params: {
   return created;
 }
 
-export async function saveMessage(params: {
-  conversationId: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  modelUsed?: string;
-  tokensInput?: number;
-  tokensOutput?: number;
-  costUsd?: number;
-  latencyMs?: number;
-}) {
-  const supabase = getServiceClient();
+export async function saveMessage(
+  supabase: Client,
+  params: {
+    conversationId: string;
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    modelUsed?: string;
+    tokensInput?: number;
+    tokensOutput?: number;
+    costUsd?: number;
+    latencyMs?: number;
+  },
+) {
   const { data, error } = await supabase
     .from('messages')
     .insert({
@@ -72,31 +77,26 @@ export async function saveMessage(params: {
   return data;
 }
 
-export async function listConversations(sessionId: string, mode?: Mode) {
-  const supabase = getServiceClient();
+export async function listConversations(supabase: Client, userId: string, mode?: Mode) {
   let query = supabase
     .from('conversations')
     .select('id, mode, title, dialect_used, created_at, updated_at')
-    .eq('session_id', sessionId)
+    .eq('user_id', userId)
     .order('updated_at', { ascending: false })
     .limit(100);
-
   if (mode) query = query.eq('mode', mode);
-
   const { data, error } = await query;
   if (error) throw error;
   return data;
 }
 
-export async function listMessages(conversationId: string, sessionId: string) {
-  const supabase = getServiceClient();
+export async function listMessages(supabase: Client, conversationId: string, userId: string) {
   const { data: conv } = await supabase
     .from('conversations')
     .select('id')
     .eq('id', conversationId)
-    .eq('session_id', sessionId)
+    .eq('user_id', userId)
     .maybeSingle();
-
   if (!conv) return null;
 
   const { data, error } = await supabase
@@ -108,24 +108,22 @@ export async function listMessages(conversationId: string, sessionId: string) {
   return data;
 }
 
-export async function listImages(conversationId: string, sessionId: string) {
-  const supabase = getServiceClient();
+export async function listImages(supabase: Client, conversationId: string, userId: string) {
   const { data, error } = await supabase
     .from('generated_images')
     .select('*')
     .eq('conversation_id', conversationId)
-    .eq('session_id', sessionId)
+    .eq('user_id', userId)
     .order('created_at', { ascending: true });
   if (error) throw error;
   return data;
 }
 
-export async function deleteConversation(id: string, sessionId: string) {
-  const supabase = getServiceClient();
+export async function deleteConversation(supabase: Client, id: string, userId: string) {
   const { error } = await supabase
     .from('conversations')
     .delete()
     .eq('id', id)
-    .eq('session_id', sessionId);
+    .eq('user_id', userId);
   if (error) throw error;
 }

@@ -1,16 +1,17 @@
-'use client';
-
 import Link from 'next/link';
 import { Plus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ModeSwitch } from './ModeSwitch';
 import { ConversationList } from './ConversationList';
+import { UserMenu } from '@/components/auth/UserMenu';
 import { getModeConfigByMode } from '@/lib/modes';
+import { getAuthUser } from '@/lib/auth';
 import type { Mode } from '@/types/database';
 
-export function Sidebar({ mode }: { mode: Mode }) {
+export async function Sidebar({ mode }: { mode: Mode }) {
   const cfg = getModeConfigByMode(mode);
+  const auth = await getAuthUser();
 
   return (
     <aside className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-border bg-canvas-elevated/60 backdrop-blur-2xl">
@@ -48,14 +49,22 @@ export function Sidebar({ mode }: { mode: Mode }) {
         <ConversationList mode={mode} slug={cfg.slug} />
       </ScrollArea>
 
-      {/* Footer */}
-      <div className="border-t border-border p-4">
+      {/* User + limit footer */}
+      <div className="space-y-3 border-t border-border p-4">
         <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-xs">
           <span className="text-ink-muted">الحد اليومي</span>
           <span className="font-medium text-foreground">
             {cfg.limit} <span className="text-ink-subtle">{cfg.limitUnit}</span>
           </span>
         </div>
+        {auth?.profile && auth.user.email && (
+          <UserMenu
+            firstName={auth.profile.first_name}
+            lastName={auth.profile.last_name}
+            email={auth.user.email}
+            avatarUrl={auth.profile.avatar_url}
+          />
+        )}
       </div>
     </aside>
   );
