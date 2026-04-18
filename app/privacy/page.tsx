@@ -16,7 +16,7 @@ export default function PrivacyPage() {
           </Link>
         </Button>
 
-        <h1 className="ds-display-ar mb-3 text-4xl font-bold">سياسة الخصوصية</h1>
+        <h1 className="ds-display mb-3 text-4xl font-bold">سياسة الخصوصية</h1>
         <p className="mb-10 text-sm text-ink-subtle">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
 
         <div className="space-y-6 text-sm leading-[1.9] text-ink-muted">

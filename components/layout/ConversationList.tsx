@@ -89,14 +89,14 @@ export function ConversationList({ mode, slug }: { mode: Mode; slug: string }) {
               className={cn(
                 'group relative flex items-start gap-2.5 rounded-xl border px-3 py-2.5 text-sm transition-all duration-fast',
                 active
-                  ? 'border-violet-500/30 bg-violet-500/10 text-foreground shadow-[inset_0_0_0_1px_rgba(139,92,246,0.1)]'
+                  ? 'border-gold-400/30 bg-gold-400/10 text-foreground shadow-[inset_0_0_0_1px_rgba(184,149,106,0.1)]'
                   : 'border-transparent text-ink-muted hover:bg-white/[0.04] hover:text-foreground',
               )}
             >
               <MessageSquare
                 className={cn(
                   'mt-0.5 h-4 w-4 shrink-0',
-                  active ? 'text-violet-400' : 'text-ink-subtle',
+                  active ? 'text-gold-400' : 'text-ink-subtle',
                 )}
               />
               <div className="min-w-0 flex-1">

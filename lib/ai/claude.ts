@@ -6,7 +6,7 @@ export const TRANSLATOR_MODEL = 'claude-sonnet-4-6';
 
 export type ChatMessage = {
   role: 'user' | 'assistant';
-  content: string;
+  content: string | Anthropic.ContentBlockParam[];
 };
 
 let cachedClient: Anthropic | null = null;

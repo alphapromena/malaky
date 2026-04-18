@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, Loader2, Palette } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { ChatInput } from './ChatInput';
 import { ImageResult, type ImageItem } from './ImageResult';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 
 export function DesignerStream({
@@ -74,18 +75,16 @@ export function DesignerStream({
         {isEmpty ? (
           <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center animate-fade-in">
             <div
-              className={`mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-white ${cfg.glow}`}
+              className={`mb-8 flex h-24 w-32 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-canvas-base ${cfg.glow}`}
             >
-              <Palette className="h-9 w-9" />
+              <WingsLogo size={40} tone="solid" className="text-canvas-base" />
             </div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-subtle">
               <span className="font-latin">{cfg.nameEn}</span>
               <span>·</span>
               <span>{cfg.nameAr}</span>
             </div>
-            <h2 className="ds-display mb-3 bg-gradient-to-br from-white to-white/60 bg-clip-text text-5xl text-transparent">
-              {cfg.nameAr}
-            </h2>
+            <h2 className="ds-wordmark mb-3 text-6xl">ملاكي</h2>
             <p className="max-w-sm text-pretty text-base leading-relaxed text-ink-muted">
               {cfg.tagline}
             </p>
@@ -103,8 +102,8 @@ export function DesignerStream({
                 </li>
               ))}
               {submitting && (
-                <li className="flex items-center gap-3 rounded-2xl border border-pink-500/20 bg-pink-500/5 px-5 py-4 text-sm">
-                  <Loader2 className="h-4 w-4 animate-spin text-pink-400" />
+                <li className="flex items-center gap-3 rounded-2xl border border-terracotta-400/25 bg-terracotta-400/5 px-5 py-4 text-sm">
+                  <Loader2 className="h-4 w-4 animate-spin text-gold-300" />
                   <span className="text-ink-muted">جاري توليد الصورة…</span>
                   <span className="ms-auto text-[11px] text-ink-subtle">~30 ثانية</span>
                 </li>
@@ -123,11 +122,12 @@ export function DesignerStream({
       <ChatInput
         placeholder={cfg.placeholder}
         submitting={submitting}
-        onSubmit={submit}
+        onSubmit={(text) => submit(text)}
+        allowAttachments={false}
         helperText={
           submitting
             ? 'جاري التوليد…'
-            : 'نصائح: صف العناصر، الألوان، المشاعر، والأسلوب الفني'
+            : 'اضغط Enter للتوليد · نصائح: صف العناصر، الألوان، والأسلوب الفني'
         }
       />
     </div>

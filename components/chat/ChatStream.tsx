@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
-import { ChatInput } from './ChatInput';
+import { ChatInput, type AttachmentFile } from './ChatInput';
 import { MessageList, type UiMessage } from './MessageList';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 import type { Mode } from '@/types/database';
 
@@ -44,14 +45,17 @@ export function ChatStream({
   const endpoint = mode === 'WRITER' ? '/api/writer' : '/api/coder';
 
   const submit = useCallback(
-    async (text: string) => {
+    async (text: string, files: AttachmentFile[] = []) => {
       setError(null);
       setSubmitting(true);
+
+      const attachmentSummary =
+        files.length > 0 ? `\n\n📎 ${files.map((f) => f.name).join(' · ')}` : '';
 
       const userMsg: UiMessage = {
         id: `temp-user-${Date.now()}`,
         role: 'user',
-        content: text,
+        content: text + attachmentSummary,
       };
       const assistantId = `temp-assistant-${Date.now()}`;
       const assistantMsg: UiMessage = {
@@ -65,11 +69,12 @@ export function ChatStream({
       let newConversationId: string | null = conversationId;
 
       try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, conversationId }),
-        });
+        const body = new FormData();
+        body.append('message', text);
+        if (conversationId) body.append('conversationId', conversationId);
+        files.forEach((f) => body.append('files', f));
+
+        const res = await fetch(endpoint, { method: 'POST', body });
 
         if (!res.ok || !res.body) {
           const data = await res.json().catch(() => ({ error: 'حدث خطأ.' }));
@@ -168,7 +173,7 @@ export function ChatStream({
         helperText={
           submitting
             ? 'جاري الإرسال…'
-            : 'اضغط Ctrl/⌘ + Enter للإرسال — كل محادثة تُحفظ تلقائياً'
+            : 'اضغط Enter للإرسال · Shift + Enter لسطر جديد · يقبل صور، PDF، و DOCX'
         }
       />
     </div>
@@ -177,22 +182,19 @@ export function ChatStream({
 
 function EmptyState({ mode }: { mode: Mode }) {
   const cfg = getModeConfigByMode(mode);
-  const Icon = cfg.icon;
   return (
     <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center animate-fade-in">
       <div
-        className={`mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-white ${cfg.glow}`}
+        className={`mb-8 flex h-24 w-32 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-canvas-base ${cfg.glow}`}
       >
-        <Icon className="h-9 w-9" />
+        <WingsLogo size={40} tone="solid" className="text-canvas-base" />
       </div>
       <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-subtle">
         <span className="font-latin">{cfg.nameEn}</span>
         <span>·</span>
         <span>{cfg.nameAr}</span>
       </div>
-      <h2 className="ds-display mb-3 bg-gradient-to-br from-white to-white/60 bg-clip-text text-5xl text-transparent">
-        {cfg.nameAr}
-      </h2>
+      <h2 className="ds-wordmark mb-3 text-6xl">ملاكي</h2>
       <p className="max-w-sm text-pretty text-base leading-relaxed text-ink-muted">
         {cfg.tagline}
       </p>

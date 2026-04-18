@@ -42,7 +42,7 @@ export default async function AccountPage() {
     <div className="p-6 sm:p-10">
       <header className="mb-8">
         <p className="font-latin text-[10px] uppercase tracking-[0.18em] text-ink-subtle">Account</p>
-        <h1 className="ds-display-ar mt-1 text-3xl font-bold">الحساب</h1>
+        <h1 className="ds-display mt-1 text-3xl font-bold">الحساب</h1>
         <p className="mt-2 text-sm text-ink-muted">معلومات أساسية عن حسابك وخيارات الأمان.</p>
       </header>
 

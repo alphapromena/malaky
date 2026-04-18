@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ModeSwitch } from './ModeSwitch';
 import { ConversationList } from './ConversationList';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 import { getAuthUser } from '@/lib/auth';
 import type { Mode } from '@/types/database';
@@ -18,11 +19,11 @@ export async function Sidebar({ mode }: { mode: Mode }) {
       {/* Brand */}
       <div className="border-b border-border p-5">
         <Link href="/" className="mb-5 flex items-center gap-3" aria-label="ملاكي">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 shadow-glow">
-            <Sparkles className="h-5 w-5 text-white" />
+          <div className="relative flex h-11 w-16 items-center justify-center rounded-xl bg-canvas-raised shadow-sm">
+            <WingsLogo size={20} />
           </div>
           <div className="leading-tight">
-            <h2 className="text-lg font-bold text-foreground">ملاكي</h2>
+            <h2 className="ds-wordmark text-2xl">ملاكي</h2>
             <p className="font-latin text-[10px] uppercase tracking-[0.2em] text-ink-subtle">
               Malaky AI
             </p>

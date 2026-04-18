@@ -19,7 +19,7 @@ export default function GlobalError({
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-canvas-base p-4 text-center">
       <div className="aurora" />
       <div className="relative max-w-md">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500/20 to-pink-500/20 text-orange-400">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-terracotta-400/20 to-gold-400/20 text-terracotta-400">
           <AlertTriangle className="h-7 w-7" />
         </div>
         <h1 className="ds-display mb-3 text-3xl font-bold">حدث خطأ غير متوقع</h1>

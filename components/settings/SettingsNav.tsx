@@ -59,12 +59,12 @@ export function SettingsNav() {
                   className={cn(
                     'group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors',
                     active
-                      ? 'border-violet-500/30 bg-violet-500/10 text-foreground'
+                      ? 'border-gold-400/30 bg-gold-400/10 text-foreground'
                       : 'border-transparent text-ink-muted hover:bg-white/[0.04] hover:text-foreground',
                   )}
                 >
                   <Icon
-                    className={cn('h-4 w-4 shrink-0', active ? 'text-violet-300' : 'text-ink-subtle')}
+                    className={cn('h-4 w-4 shrink-0', active ? 'text-gold-300' : 'text-ink-subtle')}
                   />
                   <span className="flex-1">{label}</span>
                   {badge && (

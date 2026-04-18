@@ -12,7 +12,7 @@ export default async function ProfileSettingsPage() {
         <p className="font-latin text-[10px] uppercase tracking-[0.18em] text-ink-subtle">
           Preferences
         </p>
-        <h1 className="ds-display-ar mt-1 text-3xl font-bold">التفضيلات</h1>
+        <h1 className="ds-display mt-1 text-3xl font-bold">التفضيلات</h1>
         <p className="mt-2 text-sm text-ink-muted">
           عدّل شخصيّتك أمام ملاكي وسلوك الـ AI معك.
         </p>

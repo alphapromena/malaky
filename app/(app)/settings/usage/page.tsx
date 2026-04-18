@@ -16,8 +16,8 @@ type Totals = {
 
 const MODE_META: Record<Mode, { label: string; icon: typeof PenLine; gradient: string }> = {
   WRITER: { label: 'الكاتب', icon: PenLine, gradient: 'from-emerald-400 to-cyan-500' },
-  CODER: { label: 'المبرمج', icon: Code2, gradient: 'from-violet-500 to-indigo-500' },
-  DESIGNER: { label: 'المصمم', icon: Palette, gradient: 'from-pink-500 to-orange-500' },
+  CODER: { label: 'المبرمج', icon: Code2, gradient: 'from-gold-400 to-gold-700' },
+  DESIGNER: { label: 'المصمم', icon: Palette, gradient: 'from-terracotta-400 to-gold-400' },
 };
 
 function formatNumber(n: number): string {
@@ -104,7 +104,7 @@ export default async function UsagePage() {
         <p className="font-latin text-[10px] uppercase tracking-[0.18em] text-ink-subtle">
           Usage
         </p>
-        <h1 className="ds-display-ar mt-1 text-3xl font-bold">الاستهلاك</h1>
+        <h1 className="ds-display mt-1 text-3xl font-bold">الاستهلاك</h1>
         <p className="mt-2 text-sm text-ink-muted">
           تتبّع رسائلك، التوكنز، والتكلفة عبر كل الأوضاع.
         </p>
@@ -214,7 +214,7 @@ function StatCard({
   return (
     <div className="rounded-2xl border border-border bg-white/[0.03] p-4 backdrop-blur-xl">
       <div className="mb-2 flex items-center gap-2 text-xs text-ink-subtle">
-        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/[0.04] text-violet-300">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/[0.04] text-gold-300">
           {icon}
         </span>
         <span>{label}</span>

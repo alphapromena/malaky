@@ -44,7 +44,7 @@ export function ImageResult({ image }: { image: ImageItem }) {
       </div>
       <div className="space-y-3 p-5">
         <div className="flex items-start gap-2">
-          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-pink-400" />
+          <ImageIcon className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
           <div className="min-w-0 flex-1 space-y-1">
             <p className="text-sm font-medium leading-snug text-foreground">
               {image.arabic_prompt}

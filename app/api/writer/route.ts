@@ -5,13 +5,20 @@ import { detectDialect } from '@/lib/arabic/dialect-detector';
 import { resolveDialect, writerSystemPrompt } from '@/lib/ai/prompts';
 import { WRITER_MODEL, estimateCostUsd, streamClaude } from '@/lib/ai/claude';
 import { checkAndIncrementRateLimit } from '@/lib/rate-limit';
+import {
+  MAX_FILES,
+  attachmentsSummary,
+  buildUserContent,
+  isSupportedAttachment,
+  processAttachment,
+} from '@/lib/ai/attachments';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const schema = z.object({
   conversationId: z.string().uuid().nullable().optional(),
-  message: z.string().min(1).max(8000),
+  message: z.string().max(8000),
 });
 
 export async function POST(req: Request) {
@@ -36,34 +43,71 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(JSON.stringify({ error: 'طلب غير صالح.' }), { status: 400 });
+  // Parse message + files (FormData). Falls back to JSON for backwards compat.
+  let message = '';
+  let conversationId: string | null = null;
+  const rawFiles: File[] = [];
+
+  const contentType = req.headers.get('content-type') ?? '';
+  if (contentType.includes('multipart/form-data')) {
+    const form = await req.formData();
+    message = String(form.get('message') ?? '').trim();
+    const convRaw = form.get('conversationId');
+    if (typeof convRaw === 'string' && convRaw) conversationId = convRaw;
+    for (const entry of form.getAll('files')) {
+      if (entry instanceof File && entry.size > 0) rawFiles.push(entry);
+    }
+  } else {
+    try {
+      const body = (await req.json()) as { message?: string; conversationId?: string | null };
+      message = String(body.message ?? '').trim();
+      conversationId = body.conversationId ?? null;
+    } catch {
+      return new Response(JSON.stringify({ error: 'طلب غير صالح.' }), { status: 400 });
+    }
   }
-  const parsed = schema.safeParse(body);
+
+  const parsed = schema.safeParse({ message, conversationId });
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: 'رسالتك فارغة أو طويلة جداً.' }), { status: 400 });
+    return new Response(JSON.stringify({ error: 'رسالتك طويلة جداً.' }), { status: 400 });
   }
 
-  const { message, conversationId } = parsed.data;
+  if (!message && rawFiles.length === 0) {
+    return new Response(JSON.stringify({ error: 'اكتب رسالة أو أرفق ملفاً.' }), { status: 400 });
+  }
 
-  // Fetch profile for personalization (nickname / custom instructions / dialect pref)
+  if (rawFiles.length > MAX_FILES) {
+    return new Response(
+      JSON.stringify({ error: `الحد الأقصى ${MAX_FILES} ملفات في الرسالة الواحدة.` }),
+      { status: 400 },
+    );
+  }
+
+  // Validate file types before any expensive work
+  for (const f of rawFiles) {
+    if (!isSupportedAttachment(f)) {
+      return new Response(
+        JSON.stringify({ error: `نوع الملف «${f.name}» غير مدعوم.` }),
+        { status: 400 },
+      );
+    }
+  }
+
+  // Profile for personalization
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .maybeSingle();
 
-  const detected = detectDialect(message);
+  const detected = detectDialect(message || '');
   const dialect = resolveDialect(profile, detected);
 
   const conversation = await getOrCreateConversation(supabase, {
     userId: user.id,
     mode: 'WRITER',
-    conversationId: conversationId ?? null,
-    firstUserMessage: message,
+    conversationId,
+    firstUserMessage: message || `[${rawFiles.length} مرفق]`,
     dialectUsed: dialect,
   });
 
@@ -85,7 +129,25 @@ export async function POST(req: Request) {
       m.role === 'user' || m.role === 'assistant',
   );
 
-  await saveMessage(supabase, { conversationId: conversation.id, role: 'user', content: message });
+  // Process attachments (base64 images/PDFs, DOCX → extracted text)
+  let attachments;
+  try {
+    attachments = await Promise.all(rawFiles.map(processAttachment));
+  } catch (err) {
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : 'تعذّر قراءة المرفقات.' }),
+      { status: 400 },
+    );
+  }
+
+  const userContent = buildUserContent(message, attachments);
+  const savedUserText = (message + attachmentsSummary(rawFiles.map((f) => f.name))).trim();
+
+  await saveMessage(supabase, {
+    conversationId: conversation.id,
+    role: 'user',
+    content: savedUserText || '[مرفقات]',
+  });
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -100,7 +162,7 @@ export async function POST(req: Request) {
         const result = await streamClaude({
           model: WRITER_MODEL,
           system: writerSystemPrompt(dialect, profile),
-          messages: [...historyMessages, { role: 'user', content: message }],
+          messages: [...historyMessages, { role: 'user', content: userContent }],
           maxTokens: 4096,
           temperature: 0.7,
           onToken: (delta) => {

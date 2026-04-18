@@ -137,11 +137,11 @@ export function SignupForm() {
 
   return (
     <div className="relative my-10 w-full max-w-md animate-scale-in">
-      <div className="absolute -inset-8 rounded-[48px] bg-gradient-to-br from-indigo-500/15 via-violet-500/15 to-pink-500/15 opacity-60 blur-3xl" />
+      <div className="absolute -inset-8 rounded-[48px] bg-gradient-to-br from-gold-300/15 via-gold-400/15 to-gold-600/15 opacity-60 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-3xl border border-border bg-canvas-elevated/80 p-8 backdrop-blur-2xl shadow-xl sm:p-10">
         <div className="mb-7 text-center">
-          <h1 className="ds-display-ar mb-2 text-3xl font-bold">
+          <h1 className="ds-wordmark mb-2 text-4xl">
             {completeProfile ? 'أكمل ملفك الشخصي' : 'أهلاً في ملاكي'}
           </h1>
           <p className="text-sm text-ink-muted">
@@ -269,11 +269,11 @@ export function SignupForm() {
             />
             <span className="text-xs leading-relaxed text-ink-muted">
               أوافق على{' '}
-              <Link href="/terms" className="text-violet-300 underline decoration-violet-500/40 hover:text-violet-200" target="_blank">
+              <Link href="/terms" className="text-gold-300 underline decoration-gold-400/40 hover:text-gold-200" target="_blank">
                 شروط الاستخدام
               </Link>{' '}
               و
-              <Link href="/privacy" className="text-violet-300 underline decoration-violet-500/40 hover:text-violet-200" target="_blank">
+              <Link href="/privacy" className="text-gold-300 underline decoration-gold-400/40 hover:text-gold-200" target="_blank">
                 سياسة الخصوصية
               </Link>
               . أدرك أنّ بياناتي تُخزَّن لتقديم الخدمة.
@@ -304,7 +304,7 @@ export function SignupForm() {
         {!completeProfile && (
           <p className="mt-6 text-center text-sm text-ink-muted">
             عندك حساب؟{' '}
-            <Link href="/login" className="font-medium text-violet-300 hover:text-violet-200">
+            <Link href="/login" className="font-medium text-gold-300 hover:text-gold-200">
               سجّل دخولك
             </Link>
           </p>

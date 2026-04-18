@@ -10,7 +10,7 @@ export type ModeConfig = {
   tagline: string;
   placeholder: string;
   icon: LucideIcon;
-  /** Vibrant tailwind gradient — from/via/to classes */
+  /** Tailwind gradient classes (warm, on-brand) */
   accent: string;
   glow: string;
   limit: number;
@@ -24,10 +24,10 @@ export const MODES: ModeConfig[] = [
     nameAr: 'الكاتب',
     nameEn: 'Writer',
     tagline: 'اكتب محتوى عربي يفهم لهجتك',
-    placeholder: 'اكتب أي شي بدك الكاتب يساعدك فيه…',
+    placeholder: 'اكتب أي شي بدك المساعدة فيه…',
     icon: PenLine,
-    accent: 'from-emerald-400 via-cyan-400 to-cyan-500',
-    glow: 'shadow-[0_20px_60px_-12px_rgba(16,185,129,0.45)]',
+    accent: 'from-gold-300 to-gold-500',
+    glow: 'shadow-[0_20px_60px_-12px_rgba(184,149,106,0.45)]',
     limit: 20,
     limitUnit: 'رسالة',
   },
@@ -39,8 +39,8 @@ export const MODES: ModeConfig[] = [
     tagline: 'كود بالإنجليزية، شرح بالعربية',
     placeholder: 'اسأل عن الكود، اكتب بالعربي أو بالعربيزي…',
     icon: Code2,
-    accent: 'from-violet-500 via-violet-500 to-indigo-500',
-    glow: 'shadow-[0_20px_60px_-12px_rgba(139,92,246,0.55)]',
+    accent: 'from-gold-400 to-gold-700',
+    glow: 'shadow-[0_20px_60px_-12px_rgba(127,96,56,0.45)]',
     limit: 10,
     limitUnit: 'رسالة',
   },
@@ -52,8 +52,8 @@ export const MODES: ModeConfig[] = [
     tagline: 'وصف بالعربي، صورة فورية',
     placeholder: 'صف الصورة التي تريد بالتفصيل…',
     icon: Palette,
-    accent: 'from-pink-500 via-pink-500 to-orange-500',
-    glow: 'shadow-[0_20px_60px_-12px_rgba(236,72,153,0.55)]',
+    accent: 'from-terracotta-400 to-gold-400',
+    glow: 'shadow-[0_20px_60px_-12px_rgba(216,141,112,0.45)]',
     limit: 5,
     limitUnit: 'صورة',
   },

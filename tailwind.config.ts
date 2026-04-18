@@ -18,7 +18,7 @@ const config: Config = {
         // shadcn bridge
         border: 'var(--border)',
         input: 'var(--border)',
-        ring: 'var(--accent-2)',
+        ring: 'var(--gold-400)',
         background: 'var(--bg-primary)',
         foreground: 'var(--fg)',
         primary: {
@@ -34,8 +34,8 @@ const config: Config = {
           foreground: 'var(--fg-muted)',
         },
         accent: {
-          DEFAULT: 'var(--accent-2)',
-          foreground: 'var(--fg)',
+          DEFAULT: 'var(--gold-400)',
+          foreground: 'var(--bg-primary)',
         },
         destructive: {
           DEFAULT: 'var(--danger)',
@@ -50,7 +50,6 @@ const config: Config = {
           foreground: 'var(--fg)',
         },
 
-        // Named semantic tokens
         canvas: {
           base:     'var(--bg-primary)',
           elevated: 'var(--bg-elevated)',
@@ -64,44 +63,47 @@ const config: Config = {
           inverse: 'var(--fg-inverse)',
         },
 
-        // Full accent scale (indigo–violet–pink)
-        indigo: {
-          400: '#818CF8', 500: '#6366F1', 600: '#4F46E5', 700: '#4338CA',
+        // Full gold scale
+        gold: {
+          50:  '#F7F1E8',
+          100: '#EEE1C7',
+          200: '#DCC598',
+          300: '#C9A875',
+          400: '#B8956A',
+          DEFAULT: '#B8956A',
+          500: '#A07B4E',
+          600: '#7F6038',
+          700: '#5E4626',
+          800: '#3E2E19',
         },
-        violet: {
-          400: '#A78BFA', 500: '#8B5CF6', 600: '#7C3AED', 700: '#6D28D9',
-        },
-        pink: {
-          400: '#F472B6', 500: '#EC4899', 600: '#DB2777',
-        },
-        orange: {
-          400: '#FB923C', 500: '#F97316', 600: '#EA580C',
+        terracotta: {
+          300: '#E4B5A1',
+          400: '#D88D70',
+          500: '#B85B3C',
+          600: '#8C4228',
         },
         emerald: {
-          400: '#34D399', 500: '#10B981', 600: '#059669',
-        },
-        cyan: {
-          400: '#22D3EE', 500: '#06B6D4', 600: '#0891B2',
+          400: '#7FB378', 500: '#5E8C6A',
         },
 
-        success: '#22C55E',
-        warning: '#F59E0B',
-        danger:  '#EF4444',
+        success: '#7FB378',
+        warning: '#D8A35B',
+        danger:  '#D87070',
       },
 
       fontFamily: {
         sans:    ['var(--font-arabic)', 'var(--font-latin)', 'system-ui', 'sans-serif'],
         arabic:  ['var(--font-arabic)', 'system-ui', 'sans-serif'],
         latin:   ['var(--font-latin)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-display)', 'var(--font-latin)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-arabic)', 'serif'],
         mono:    ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
 
       fontSize: {
         xs:   ['0.75rem',  { lineHeight: '1.4' }],
         sm:   ['0.875rem', { lineHeight: '1.5' }],
-        base: ['1rem',     { lineHeight: '1.6' }],
-        md:   ['1.125rem', { lineHeight: '1.6' }],
+        base: ['1rem',     { lineHeight: '1.65' }],
+        md:   ['1.125rem', { lineHeight: '1.65' }],
         lg:   ['1.25rem',  { lineHeight: '1.5' }],
         xl:   ['1.5rem',   { lineHeight: '1.35' }],
         '2xl':['1.875rem', { lineHeight: '1.2' }],
@@ -134,8 +136,8 @@ const config: Config = {
       },
 
       transitionTimingFunction: {
-        out:    'cubic-bezier(0.16, 1, 0.3, 1)',
-        'in-out': 'cubic-bezier(0.65, 0, 0.35, 1)',
+        out:     'cubic-bezier(0.16, 1, 0.3, 1)',
+        'in-out':'cubic-bezier(0.65, 0, 0.35, 1)',
       },
       transitionDuration: {
         fast:   '150ms',
@@ -148,13 +150,9 @@ const config: Config = {
         'accordion-up':   { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
         'fade-in':        { from: { opacity: '0', transform: 'translateY(6px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
         'scale-in':       { from: { opacity: '0', transform: 'scale(0.96)' }, to: { opacity: '1', transform: 'scale(1)' } },
-        'shimmer':        {
-          '0%':   { backgroundPosition: '-200% 0' },
-          '100%': { backgroundPosition: '200% 0' },
-        },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(139, 92, 246, 0.45)' },
-          '50%':      { boxShadow: '0 0 40px 8px rgba(139, 92, 246, 0.25)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(184, 149, 106, 0.45)' },
+          '50%':      { boxShadow: '0 0 40px 8px rgba(184, 149, 106, 0.25)' },
         },
       },
       animation: {
@@ -162,8 +160,7 @@ const config: Config = {
         'accordion-up':   'accordion-up 0.24s ease-out',
         'fade-in':        'fade-in 0.42s cubic-bezier(0.16, 1, 0.3, 1)',
         'scale-in':       'scale-in 0.24s cubic-bezier(0.16, 1, 0.3, 1)',
-        'shimmer':        'shimmer 2.4s linear infinite',
-        'pulse-glow':     'pulse-glow 2s ease-in-out infinite',
+        'pulse-glow':     'pulse-glow 2.4s ease-in-out infinite',
       },
     },
   },

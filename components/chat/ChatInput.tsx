@@ -1,10 +1,28 @@
 'use client';
 
-import { useRef, useState, type KeyboardEvent } from 'react';
-import { Send, Loader2, Sparkles } from 'lucide-react';
+import { useRef, useState, type KeyboardEvent, type ChangeEvent } from 'react';
+import { FileText, Image as ImageIcon, Loader2, Paperclip, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+
+export type AttachmentFile = File;
+
+export const ACCEPTED_MIMES =
+  'image/png,image/jpeg,image/webp,image/gif,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+export const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20 MB
+export const MAX_FILES = 5;
+
+function humanSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function fileIconFor(file: File) {
+  if (file.type.startsWith('image/')) return ImageIcon;
+  return FileText;
+}
 
 export function ChatInput({
   placeholder,
@@ -12,65 +30,164 @@ export function ChatInput({
   onSubmit,
   submitting,
   helperText,
+  allowAttachments = true,
 }: {
   placeholder: string;
   disabled?: boolean;
-  onSubmit: (text: string) => void | Promise<void>;
+  onSubmit: (text: string, files: AttachmentFile[]) => void | Promise<void>;
   submitting: boolean;
   helperText?: string;
+  allowAttachments?: boolean;
 }) {
   const [value, setValue] = useState('');
-  const ref = useRef<HTMLTextAreaElement>(null);
+  const [files, setFiles] = useState<AttachmentFile[]>([]);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleKey(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    // Enter submits; Shift+Enter inserts a newline.
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       fire();
     }
   }
 
+  function addFiles(list: FileList | null) {
+    if (!list) return;
+    setFileError(null);
+    const incoming = Array.from(list);
+    const next = [...files];
+    for (const f of incoming) {
+      if (next.length >= MAX_FILES) {
+        setFileError(`الحد الأقصى ${MAX_FILES} ملفات في الرسالة الواحدة.`);
+        break;
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        setFileError(`«${f.name}» حجمه أكبر من ${humanSize(MAX_FILE_BYTES)}.`);
+        continue;
+      }
+      next.push(f);
+    }
+    setFiles(next);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
+  function removeFile(idx: number) {
+    setFiles((prev) => prev.filter((_, i) => i !== idx));
+  }
+
   function fire() {
     const trimmed = value.trim();
-    if (!trimmed || submitting) return;
-    onSubmit(trimmed);
+    if ((!trimmed && files.length === 0) || submitting) return;
+    onSubmit(trimmed, files);
     setValue('');
-    ref.current?.focus();
+    setFiles([]);
+    setFileError(null);
+    textareaRef.current?.focus();
   }
+
+  const canSubmit = !submitting && !disabled && (value.trim().length > 0 || files.length > 0);
 
   return (
     <div className="border-t border-border bg-canvas-elevated/40 backdrop-blur-xl">
       <div className="mx-auto w-full max-w-3xl p-3 sm:p-5">
         <div
           className={cn(
-            'group relative flex items-end gap-2 rounded-2xl border border-border bg-white/[0.04] p-2.5 transition-all duration-normal ease-out',
-            'focus-within:border-violet-500/40 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.15)]',
+            'group relative flex flex-col gap-2 rounded-2xl border border-border bg-white/[0.04] p-2.5 transition-all duration-normal ease-out',
+            'focus-within:border-gold-400/60 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_0_4px_rgba(184,149,106,0.15)]',
             disabled && 'opacity-60',
           )}
         >
-          <Sparkles className="ms-1 mt-2.5 h-4 w-4 shrink-0 text-violet-400/70 transition-colors group-focus-within:text-violet-400" />
-          <Textarea
-            ref={ref}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKey}
-            placeholder={placeholder}
-            className="min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent px-1 py-2 shadow-none focus:shadow-none focus:border-0 focus:ring-0"
-            rows={1}
-            disabled={disabled || submitting}
-            dir="auto"
-          />
-          <Button
-            onClick={fire}
-            disabled={!value.trim() || submitting || disabled}
-            size="icon"
-            className="h-10 w-10 shrink-0 rounded-xl"
-            aria-label="إرسال"
-          >
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </Button>
+          {/* Attachment chips */}
+          {files.length > 0 && (
+            <ul className="flex flex-wrap gap-2 px-1 pt-1" aria-label="المرفقات">
+              {files.map((f, i) => {
+                const Icon = fileIconFor(f);
+                return (
+                  <li
+                    key={`${f.name}-${i}`}
+                    className="flex items-center gap-2 rounded-lg border border-border bg-canvas-raised px-2.5 py-1.5 text-xs"
+                  >
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gold-400/15 text-gold-300">
+                      <Icon className="h-3.5 w-3.5" />
+                    </span>
+                    <span className="max-w-[10rem] truncate font-latin" dir="ltr" title={f.name}>
+                      {f.name}
+                    </span>
+                    <span className="text-ink-subtle">{humanSize(f.size)}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(i)}
+                      className="ms-1 rounded-md p-0.5 text-ink-subtle transition-colors hover:bg-white/10 hover:text-foreground"
+                      aria-label={`إزالة ${f.name}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          {/* Input row */}
+          <div className="flex items-end gap-2">
+            {allowAttachments && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_MIMES}
+                  multiple
+                  hidden
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files)}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 rounded-xl"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={submitting || disabled || files.length >= MAX_FILES}
+                  aria-label="إرفاق ملف"
+                  title="إرفاق صورة أو PDF أو DOCX"
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+
+            <Textarea
+              ref={textareaRef}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={handleKey}
+              placeholder={placeholder}
+              className="min-h-[44px] max-h-[220px] resize-none border-0 bg-transparent px-1 py-2 shadow-none focus:shadow-none focus:border-0 focus:ring-0"
+              rows={1}
+              disabled={disabled || submitting}
+              dir="auto"
+            />
+
+            <Button
+              onClick={fire}
+              disabled={!canSubmit}
+              size="icon"
+              className="h-10 w-10 shrink-0 rounded-xl"
+              aria-label="إرسال"
+            >
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
+
+        {fileError && (
+          <p className="mt-2 text-center text-[11px] text-danger">{fileError}</p>
+        )}
+
         <p className="mt-2.5 text-center text-[11px] text-ink-subtle">
-          {helperText ?? 'اضغط Ctrl/⌘ + Enter للإرسال'}
+          {helperText ??
+            'اضغط Enter للإرسال · Shift + Enter لسطر جديد · يقبل صور، PDF، و DOCX'}
         </p>
       </div>
     </div>

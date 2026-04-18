@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Sans_Arabic, IBM_Plex_Mono, Inter, Space_Grotesk } from 'next/font/google';
+import { IBM_Plex_Sans_Arabic, IBM_Plex_Mono, Inter, Amiri } from 'next/font/google';
 import './globals.css';
 
 const plexArabic = IBM_Plex_Sans_Arabic({
@@ -16,9 +16,11 @@ const inter = Inter({
   display: 'swap',
 });
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
+// Display font — classical Arabic calligraphy for brand + headings
+const amiri = Amiri({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
   variable: '--font-display',
   display: 'swap',
 });
@@ -32,20 +34,19 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: 'ملاكي — مساعدك الذكي بالعربي',
-  description:
-    'منصة ذكاء اصطناعي عربية تجمع الكاتب والمبرمج والمصمم في مكان واحد.',
-  keywords: ['ذكاء اصطناعي', 'عربي', 'كتابة', 'برمجة', 'تصميم', 'Malaky', 'ملاكي'],
+  description: 'The sovereign AI agent of the Arab world.',
+  keywords: ['ذكاء اصطناعي', 'عربي', 'Malaky', 'ملاكي'],
   authors: [{ name: 'قصي كنعان' }],
   openGraph: {
     title: 'ملاكي — مساعدك الذكي بالعربي',
-    description: 'ثلاثة أوضاع ذكية: الكاتب، المبرمج، والمصمم. كلها بالعربي.',
+    description: 'The sovereign AI agent of the Arab world.',
     locale: 'ar_SA',
     type: 'website',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#07070B',
+  themeColor: '#0B0906',
   width: 'device-width',
   initialScale: 1,
 };
@@ -55,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="ar"
       dir="rtl"
-      className={`${plexArabic.variable} ${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable} dark`}
+      className={`${plexArabic.variable} ${inter.variable} ${amiri.variable} ${plexMono.variable} dark`}
     >
       <body className="min-h-screen bg-background text-foreground antialiased">{children}</body>
     </html>

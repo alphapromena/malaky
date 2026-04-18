@@ -1,7 +1,8 @@
 'use client';
 
-import { Bot, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { Markdown } from './Markdown';
+import { WingsLogo } from '@/components/brand/WingsLogo';
 import { cn } from '@/lib/utils';
 
 export type UiMessage = {
@@ -21,29 +22,40 @@ export function MessageList({ messages }: { messages: UiMessage[] }) {
               className={cn(
                 'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm',
                 m.role === 'user'
-                  ? 'bg-white/[0.06] text-foreground border border-border'
-                  : 'bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 text-white shadow-glow',
+                  ? 'border border-border bg-white/[0.06] text-foreground'
+                  : 'bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 text-canvas-base shadow-glow',
               )}
             >
-              {m.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+              {m.role === 'user' ? (
+                <User className="h-4 w-4" />
+              ) : (
+                <WingsLogo size={18} tone="solid" className="text-canvas-base" />
+              )}
             </div>
             <div className="min-w-0 flex-1">
               <div className="mb-1.5 flex items-center gap-2 text-[11px] font-medium">
-                <span className={cn(m.role === 'user' ? 'text-ink-muted' : 'text-gradient-accent font-semibold')}>
+                <span
+                  className={cn(
+                    m.role === 'user' ? 'text-ink-muted' : 'text-gradient-brand font-semibold',
+                  )}
+                >
                   {m.role === 'user' ? 'أنت' : 'ملاكي'}
                 </span>
               </div>
               <div
+                dir="auto"
                 className={cn(
-                  'rounded-2xl px-5 py-4 text-sm leading-[1.8]',
+                  'rounded-2xl px-5 py-4 text-sm leading-[1.85]',
                   m.role === 'user'
                     ? 'border border-border bg-white/[0.03]'
-                    : 'border border-violet-500/15 bg-gradient-to-br from-violet-500/[0.06] to-pink-500/[0.04] shadow-sm',
+                    : 'border border-gold-400/20 bg-gradient-to-br from-gold-400/[0.06] to-gold-600/[0.04] shadow-sm',
                   m.streaming && 'streaming-cursor',
                 )}
               >
                 {m.role === 'user' ? (
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  <p className="whitespace-pre-wrap" dir="auto">
+                    {m.content}
+                  </p>
                 ) : (
                   <Markdown>{m.content}</Markdown>
                 )}

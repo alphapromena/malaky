@@ -46,11 +46,11 @@ export function LoginForm() {
 
   return (
     <div className="relative w-full max-w-md animate-scale-in">
-      <div className="absolute -inset-8 rounded-[48px] bg-gradient-to-br from-indigo-500/15 via-violet-500/15 to-pink-500/15 opacity-60 blur-3xl" />
+      <div className="absolute -inset-8 rounded-[48px] bg-gradient-to-br from-gold-300/15 via-gold-400/15 to-gold-600/15 opacity-60 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-3xl border border-border bg-canvas-elevated/80 p-8 backdrop-blur-2xl shadow-xl sm:p-10">
         <div className="mb-7 text-center">
-          <h1 className="ds-display-ar mb-2 text-3xl font-bold">أهلاً بعودتك</h1>
+          <h1 className="ds-wordmark mb-2 text-4xl">أهلاً بعودتك</h1>
           <p className="text-sm text-ink-muted">سجّل دخولك للمتابعة إلى ملاكي</p>
         </div>
 
@@ -124,7 +124,7 @@ export function LoginForm() {
           ليس لديك حساب؟{' '}
           <Link
             href={`/signup${next !== '/writer' ? `?next=${encodeURIComponent(next)}` : ''}`}
-            className="font-medium text-violet-300 hover:text-violet-200"
+            className="font-medium text-gold-300 hover:text-gold-200"
           >
             أنشئ حساباً جديداً
           </Link>

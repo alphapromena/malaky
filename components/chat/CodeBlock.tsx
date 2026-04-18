@@ -37,7 +37,7 @@ export function CodeBlock({ language, value }: { language: string; value: string
           variant="ghost"
           size="sm"
           onClick={copy}
-          className="h-7 gap-1.5 px-2 text-ink-muted hover:bg-white/[0.06] hover:text-violet-300"
+          className="h-7 gap-1.5 px-2 text-ink-muted hover:bg-white/[0.06] hover:text-gold-300"
         >
           {copied ? (
             <>

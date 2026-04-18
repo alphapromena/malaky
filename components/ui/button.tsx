@@ -9,18 +9,18 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 text-white shadow-glow hover:shadow-[0_0_40px_-4px_rgba(139,92,246,0.7)] hover:-translate-y-0.5',
+          'bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 text-white shadow-glow hover:shadow-[0_0_40px_-4px_rgba(184,149,106,0.7)] hover:-translate-y-0.5',
         solid:
           'bg-white text-canvas-base hover:bg-white/90',
         gold:
-          'bg-gradient-to-br from-violet-500 to-pink-500 text-white shadow-glow hover:-translate-y-0.5',
+          'bg-gradient-to-br from-gold-300 to-gold-600 text-white shadow-glow hover:-translate-y-0.5',
         outline:
           'border border-border bg-white/[0.03] text-foreground backdrop-blur-md hover:bg-white/[0.08] hover:border-[var(--border-hover)]',
         secondary:
           'bg-canvas-raised text-foreground hover:bg-canvas-overlay',
         ghost: 'text-foreground hover:bg-white/[0.06]',
         destructive: 'bg-danger text-white hover:bg-danger/90',
-        link: 'text-violet-400 underline-offset-4 hover:underline hover:text-violet-300',
+        link: 'text-gold-400 underline-offset-4 hover:underline hover:text-gold-300',
         onDark:
           'bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white/20',
       },

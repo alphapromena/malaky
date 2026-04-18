@@ -35,7 +35,7 @@ export function UserMenu({
           type="button"
           className="flex w-full items-center gap-3 rounded-xl border border-border bg-white/[0.03] p-2.5 text-start transition-colors hover:bg-white/[0.06]"
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-indigo-500 via-violet-500 to-pink-500 text-sm font-semibold text-white">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 text-sm font-semibold text-white">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt="" className="h-full w-full object-cover" />

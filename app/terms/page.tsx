@@ -16,7 +16,7 @@ export default function TermsPage() {
           </Link>
         </Button>
 
-        <h1 className="ds-display-ar mb-3 text-4xl font-bold">شروط الاستخدام</h1>
+        <h1 className="ds-display mb-3 text-4xl font-bold">شروط الاستخدام</h1>
         <p className="mb-10 text-sm text-ink-subtle">آخر تحديث: {new Date().toLocaleDateString('ar-EG')}</p>
 
         <div className="space-y-6 text-sm leading-[1.9] text-ink-muted">
@@ -53,7 +53,7 @@ export default function TermsPage() {
             <h2 className="mb-2 text-lg font-semibold text-foreground">٥. الخصوصية</h2>
             <p>
               راجع{' '}
-              <Link href="/privacy" className="text-violet-300 hover:text-violet-200">
+              <Link href="/privacy" className="text-gold-300 hover:text-gold-200">
                 سياسة الخصوصية
               </Link>{' '}
               لمعرفة كيفية تعاملنا مع بياناتك.
