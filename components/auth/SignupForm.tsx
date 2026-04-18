@@ -12,7 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleButton } from './GoogleButton';
 import { getBrowserClient } from '@/lib/supabase/browser';
 
-const schema = z.object({
+const profileSchema = z.object({
   firstName: z.string().trim().min(2, 'الاسم الأول يجب أن يكون حرفين على الأقل').max(40),
   lastName: z.string().trim().min(2, 'اسم العائلة يجب أن يكون حرفين على الأقل').max(40),
   age: z
@@ -20,14 +20,17 @@ const schema = z.object({
     .int()
     .min(13, 'يجب أن تكون 13 سنة أو أكثر')
     .max(120, 'العمر غير صحيح'),
+  terms: z.literal(true, {
+    errorMap: () => ({ message: 'يجب الموافقة على شروط الاستخدام.' }),
+  }),
+});
+
+const schema = profileSchema.extend({
   email: z.string().trim().email('البريد غير صالح').max(120),
   password: z
     .string()
     .min(8, 'كلمة السر يجب أن تكون 8 أحرف على الأقل')
     .max(120, 'كلمة السر طويلة جداً'),
-  terms: z.literal(true, {
-    errorMap: () => ({ message: 'يجب الموافقة على شروط الاستخدام.' }),
-  }),
 });
 
 export function SignupForm() {
@@ -49,18 +52,24 @@ export function SignupForm() {
     e.preventDefault();
     setError(null);
 
-    const parsed = schema.safeParse({
-      firstName,
-      lastName,
-      age: Number(age),
-      email,
-      password,
-      terms,
-    });
+    const activeSchema = completeProfile ? profileSchema : schema;
+    const input = completeProfile
+      ? { firstName, lastName, age: Number(age), terms }
+      : { firstName, lastName, age: Number(age), email, password, terms };
+
+    const parsed = activeSchema.safeParse(input);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? 'بيانات غير صحيحة.');
       return;
     }
+
+    const data = parsed.data as {
+      firstName: string;
+      lastName: string;
+      age: number;
+      email?: string;
+      password?: string;
+    };
 
     startTransition(async () => {
       try {
@@ -68,7 +77,6 @@ export function SignupForm() {
         const origin = window.location.origin;
 
         if (completeProfile) {
-          // OAuth user needs to complete their profile (name/age/terms)
           const {
             data: { user },
           } = await supabase.auth.getUser();
@@ -76,9 +84,9 @@ export function SignupForm() {
 
           const { error: upsertErr } = await supabase.from('profiles').upsert({
             id: user.id,
-            first_name: parsed.data.firstName,
-            last_name: parsed.data.lastName,
-            age: parsed.data.age,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            age: data.age,
             terms_accepted_at: new Date().toISOString(),
           });
           if (upsertErr) throw upsertErr;
@@ -87,15 +95,15 @@ export function SignupForm() {
           return;
         }
 
-        const { data, error: signupErr } = await supabase.auth.signUp({
-          email: parsed.data.email,
-          password: parsed.data.password,
+        const { data: signupData, error: signupErr } = await supabase.auth.signUp({
+          email: data.email!,
+          password: data.password!,
           options: {
             emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
             data: {
-              first_name: parsed.data.firstName,
-              last_name: parsed.data.lastName,
-              age: parsed.data.age,
+              first_name: data.firstName,
+              last_name: data.lastName,
+              age: data.age,
             },
           },
         });
@@ -107,19 +115,18 @@ export function SignupForm() {
           throw signupErr;
         }
 
-        if (data.session && data.user) {
+        if (signupData.session && signupData.user) {
           const { error: profileErr } = await supabase.from('profiles').upsert({
-            id: data.user.id,
-            first_name: parsed.data.firstName,
-            last_name: parsed.data.lastName,
-            age: parsed.data.age,
+            id: signupData.user.id,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            age: data.age,
             terms_accepted_at: new Date().toISOString(),
           });
           if (profileErr) throw profileErr;
           router.replace(next);
           router.refresh();
         } else {
-          // Email confirmation required — stay here and show success
           router.replace('/signup/check-email');
         }
       } catch (err) {
