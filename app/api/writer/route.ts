@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { getServerClient } from '@/lib/supabase/server';
 import { getOrCreateConversation, saveMessage } from '@/lib/db';
 import { detectDialect } from '@/lib/arabic/dialect-detector';
-import { writerSystemPrompt } from '@/lib/ai/prompts';
+import { resolveDialect, writerSystemPrompt } from '@/lib/ai/prompts';
 import { WRITER_MODEL, estimateCostUsd, streamClaude } from '@/lib/ai/claude';
 import { checkAndIncrementRateLimit } from '@/lib/rate-limit';
 
@@ -48,7 +48,16 @@ export async function POST(req: Request) {
   }
 
   const { message, conversationId } = parsed.data;
-  const dialect = detectDialect(message);
+
+  // Fetch profile for personalization (nickname / custom instructions / dialect pref)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const detected = detectDialect(message);
+  const dialect = resolveDialect(profile, detected);
 
   const conversation = await getOrCreateConversation(supabase, {
     userId: user.id,
@@ -90,7 +99,7 @@ export async function POST(req: Request) {
 
         const result = await streamClaude({
           model: WRITER_MODEL,
-          system: writerSystemPrompt(dialect),
+          system: writerSystemPrompt(dialect, profile),
           messages: [...historyMessages, { role: 'user', content: message }],
           maxTokens: 4096,
           temperature: 0.7,

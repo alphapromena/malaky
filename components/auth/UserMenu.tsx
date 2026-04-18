@@ -1,6 +1,7 @@
 'use client';
 
-import { LogOut, User as UserIcon } from 'lucide-react';
+import Link from 'next/link';
+import { Gauge, LogOut, Settings as SettingsIcon, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,14 +15,17 @@ import {
 export function UserMenu({
   firstName,
   lastName,
+  nickname,
   email,
   avatarUrl,
 }: {
   firstName: string;
   lastName: string;
+  nickname?: string | null;
   email: string;
   avatarUrl?: string | null;
 }) {
+  const displayName = nickname?.trim() || `${firstName} ${lastName}`.trim();
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
   return (
@@ -40,22 +44,34 @@ export function UserMenu({
             )}
           </div>
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-sm font-medium">
-              {firstName} {lastName}
-            </p>
+            <p className="truncate text-sm font-medium">{displayName}</p>
             <p className="truncate font-latin text-[11px] text-ink-subtle" dir="ltr">
               {email}
             </p>
           </div>
+          <SettingsIcon className="h-4 w-4 shrink-0 text-ink-subtle" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-60" sideOffset={6}>
+      <DropdownMenuContent align="end" className="w-60" sideOffset={8}>
         <DropdownMenuLabel>حسابي</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>
-          <UserIcon className="h-4 w-4" />
-          الملف الشخصي
-          <span className="ms-auto font-latin text-[10px] text-ink-subtle">قريباً</span>
+        <DropdownMenuItem asChild>
+          <Link href="/settings/profile">
+            <UserIcon className="h-4 w-4" />
+            التفضيلات
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings/usage">
+            <Gauge className="h-4 w-4" />
+            الاستهلاك
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings/account">
+            <SettingsIcon className="h-4 w-4" />
+            إعدادات الحساب
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action="/api/auth/logout" method="post">

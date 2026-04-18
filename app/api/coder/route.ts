@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { getServerClient } from '@/lib/supabase/server';
 import { getOrCreateConversation, saveMessage } from '@/lib/db';
 import { annotateIfArabizi } from '@/lib/arabic/arabizi';
-import { CODER_SYSTEM_PROMPT } from '@/lib/ai/prompts';
+import { coderSystemPrompt } from '@/lib/ai/prompts';
 import { CODER_MODEL, estimateCostUsd, streamClaude } from '@/lib/ai/claude';
 import { checkAndIncrementRateLimit } from '@/lib/rate-limit';
 
@@ -51,6 +51,12 @@ export async function POST(req: Request) {
   const { message, conversationId } = parsed.data;
   const annotatedMessage = annotateIfArabizi(message);
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+
   const conversation = await getOrCreateConversation(supabase, {
     userId: user.id,
     mode: 'CODER',
@@ -83,7 +89,7 @@ export async function POST(req: Request) {
 
         const result = await streamClaude({
           model: CODER_MODEL,
-          system: CODER_SYSTEM_PROMPT,
+          system: coderSystemPrompt(profile),
           messages: [...historyMessages, { role: 'user', content: annotatedMessage }],
           maxTokens: 8192,
           temperature: 0.3,

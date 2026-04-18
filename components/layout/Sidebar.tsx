@@ -61,6 +61,7 @@ export async function Sidebar({ mode }: { mode: Mode }) {
           <UserMenu
             firstName={auth.profile.first_name}
             lastName={auth.profile.last_name}
+            nickname={auth.profile.nickname}
             email={auth.user.email}
             avatarUrl={auth.profile.avatar_url}
           />
