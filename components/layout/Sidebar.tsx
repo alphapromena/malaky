@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ModeSwitch } from './ModeSwitch';
 import { ConversationList } from './ConversationList';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { SettingsModal } from './SettingsModal';
 import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 import { getAuthUser } from '@/lib/auth';
@@ -88,13 +89,23 @@ export async function Sidebar({ mode }: { mode: Mode }) {
         </div>
 
         {auth?.profile && auth.user.email && (
-          <UserMenu
-            firstName={auth.profile.first_name}
-            lastName={auth.profile.last_name}
-            nickname={auth.profile.nickname}
-            email={auth.user.email}
-            avatarUrl={auth.profile.avatar_url}
-          />
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <UserMenu
+                firstName={auth.profile.first_name}
+                lastName={auth.profile.last_name}
+                nickname={auth.profile.nickname}
+                email={auth.user.email}
+                avatarUrl={auth.profile.avatar_url}
+              />
+            </div>
+            <SettingsModal
+              firstName={auth.profile.first_name}
+              lastName={auth.profile.last_name}
+              email={auth.user.email}
+              avatarUrl={auth.profile.avatar_url}
+            />
+          </div>
         )}
       </div>
     </aside>
