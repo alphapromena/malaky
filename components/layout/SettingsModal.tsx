@@ -24,6 +24,7 @@ import {
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTheme, type ThemeChoice } from '@/components/theme/ThemeProvider';
 import { cn } from '@/lib/utils';
 import type { Mode } from '@/types/database';
 
@@ -220,7 +221,7 @@ function FieldRow({
 // ---- Preferences ----------------------------------------------------------
 function PreferencesPanel() {
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
-  const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('dark');
+  const { theme, setTheme } = useTheme();
   const [emailNotif, setEmailNotif] = useState(true);
   const [productNotif, setProductNotif] = useState(false);
 
@@ -240,7 +241,7 @@ function PreferencesPanel() {
           </select>
         </FieldRow>
 
-        <FieldRow label="المظهر" hint="الثيم الافتراضي للمنصّة.">
+        <FieldRow label="المظهر" hint="الثيم يتغيّر فوراً عند الاختيار.">
           <div className="grid grid-cols-3 gap-2">
             {(
               [
@@ -254,7 +255,7 @@ function PreferencesPanel() {
                 <button
                   key={t.id}
                   type="button"
-                  onClick={() => setTheme(t.id)}
+                  onClick={() => setTheme(t.id as ThemeChoice)}
                   className={cn(
                     'flex flex-col items-center gap-1.5 rounded-lg border p-2 text-[11px] transition-colors',
                     isActive

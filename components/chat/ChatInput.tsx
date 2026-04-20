@@ -11,8 +11,6 @@ import {
   Send,
   X,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 export type AttachmentFile = File;
@@ -102,8 +100,8 @@ export function ChatInput({
   const canSubmit = !submitting && !disabled && (value.trim().length > 0 || files.length > 0);
 
   return (
-    <div className="border-t border-border bg-canvas-elevated/40 backdrop-blur-xl">
-      <div className="mx-auto w-full max-w-3xl p-3 sm:p-5">
+    <div className="bg-transparent">
+      <div className="mx-auto w-full max-w-3xl px-3 pb-3 sm:px-5 sm:pb-5">
         {activeIntegrations.length > 0 && (
           <div className="mb-2 flex flex-wrap items-center justify-center gap-1.5">
             <span className="text-[10px] uppercase tracking-[0.18em] text-ink-subtle">
@@ -122,98 +120,101 @@ export function ChatInput({
           </div>
         )}
 
+        {/* Attachment chips sit above the inline input — no surrounding card. */}
+        {files.length > 0 && (
+          <ul className="mb-2 flex flex-wrap gap-2" aria-label="المرفقات">
+            {files.map((f, i) => {
+              const Icon = fileIconFor(f);
+              return (
+                <li
+                  key={`${f.name}-${i}`}
+                  className="flex items-center gap-2 rounded-lg border border-border bg-canvas-raised/60 px-2.5 py-1.5 text-xs backdrop-blur"
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gold-400/15 text-gold-300">
+                    <Icon className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="max-w-[10rem] truncate font-latin" dir="ltr" title={f.name}>
+                    {f.name}
+                  </span>
+                  <span className="text-ink-subtle">{humanSize(f.size)}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="ms-1 rounded-md p-0.5 text-ink-subtle transition-colors hover:bg-white/10 hover:text-foreground"
+                    aria-label={`إزالة ${f.name}`}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {/* Inline composer — no boxed card, just a thin baseline that lights up on focus. */}
         <div
           className={cn(
-            'group relative flex flex-col gap-2 rounded-2xl border border-border bg-white/[0.04] p-2.5 transition-all duration-normal ease-out',
-            'focus-within:border-gold-400/60 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_0_4px_rgba(184,149,106,0.15)]',
+            'group relative flex items-end gap-1 border-b border-border/60 pb-1 transition-colors',
+            'focus-within:border-gold-400/60',
             disabled && 'opacity-60',
           )}
         >
-          {files.length > 0 && (
-            <ul className="flex flex-wrap gap-2 px-1 pt-1" aria-label="المرفقات">
-              {files.map((f, i) => {
-                const Icon = fileIconFor(f);
-                return (
-                  <li
-                    key={`${f.name}-${i}`}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-canvas-raised px-2.5 py-1.5 text-xs"
-                  >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gold-400/15 text-gold-300">
-                      <Icon className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="max-w-[10rem] truncate font-latin" dir="ltr" title={f.name}>
-                      {f.name}
-                    </span>
-                    <span className="text-ink-subtle">{humanSize(f.size)}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(i)}
-                      className="ms-1 rounded-md p-0.5 text-ink-subtle transition-colors hover:bg-white/10 hover:text-foreground"
-                      aria-label={`إزالة ${f.name}`}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+          {allowAttachments && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={ACCEPTED_MIMES}
+                multiple
+                hidden
+                onChange={(e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files)}
+              />
+              <button
+                type="button"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.05] hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={submitting || disabled || files.length >= MAX_FILES}
+                aria-label="إرفاق ملف"
+                title="إرفاق صورة أو PDF أو DOCX"
+              >
+                <Paperclip className="h-4 w-4" />
+              </button>
+            </>
           )}
 
-          <div className="flex items-end gap-2">
-            {allowAttachments && (
-              <>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={ACCEPTED_MIMES}
-                  multiple
-                  hidden
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => addFiles(e.target.files)}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-10 w-10 shrink-0 rounded-xl"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={submitting || disabled || files.length >= MAX_FILES}
-                  aria-label="إرفاق ملف"
-                  title="إرفاق صورة أو PDF أو DOCX"
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-              </>
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKey}
+            placeholder={placeholder}
+            className="max-h-[220px] min-h-[40px] flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] leading-[1.7] text-foreground placeholder:text-ink-subtle/70 focus:outline-none focus:ring-0 disabled:cursor-not-allowed"
+            rows={1}
+            disabled={disabled || submitting}
+            dir="auto"
+          />
+
+          <button
+            type="button"
+            onClick={fire}
+            disabled={!canSubmit}
+            aria-label="إرسال"
+            className={cn(
+              'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all',
+              canSubmit
+                ? 'bg-gradient-to-br from-gold-300 via-gold-400 to-gold-600 text-canvas-base shadow-sm hover:shadow-[0_0_24px_-4px_rgba(184,149,106,0.55)]'
+                : 'bg-white/[0.04] text-ink-subtle',
             )}
-
-            <Textarea
-              ref={textareaRef}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              onKeyDown={handleKey}
-              placeholder={placeholder}
-              className="min-h-[44px] max-h-[220px] resize-none border-0 bg-transparent px-1 py-2 shadow-none focus:shadow-none focus:border-0 focus:ring-0"
-              rows={1}
-              disabled={disabled || submitting}
-              dir="auto"
-            />
-
-            <Button
-              onClick={fire}
-              disabled={!canSubmit}
-              size="icon"
-              className="h-10 w-10 shrink-0 rounded-xl"
-              aria-label="إرسال"
-            >
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </Button>
-          </div>
+          >
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          </button>
         </div>
 
         {fileError && (
           <p className="mt-2 text-center text-[11px] text-danger">{fileError}</p>
         )}
 
-        <p className="mt-2.5 text-center text-[11px] text-ink-subtle">
+        <p className="mt-2 text-center text-[11px] text-ink-subtle">
           {helperText ??
             'اضغط Enter للإرسال · Shift + Enter لسطر جديد · يقبل صور، PDF، و DOCX'}
         </p>
