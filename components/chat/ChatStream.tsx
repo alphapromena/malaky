@@ -3,10 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
-import { ChatInput, type AttachmentFile, type ActiveIntegration } from './ChatInput';
+import {
+  ChatInput,
+  type AttachmentFile,
+  type ActiveIntegration,
+  type PrefillSignal,
+} from './ChatInput';
 import { MessageList, type UiMessage } from './MessageList';
+import { WelcomeScreen } from './WelcomeScreen';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { WingsLogo } from '@/components/brand/WingsLogo';
 import { getModeConfigByMode } from '@/lib/modes';
 import type { Mode } from '@/types/database';
 
@@ -37,6 +42,7 @@ export function ChatStream({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeIntegrations, setActiveIntegrations] = useState<ActiveIntegration[]>([]);
+  const [prefill, setPrefill] = useState<PrefillSignal>({ text: '', id: 0 });
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -162,11 +168,15 @@ export function ChatStream({
     [conversationId, endpoint, cfg.slug, router],
   );
 
+  const pick = useCallback((text: string) => {
+    setPrefill((p) => ({ text, id: p.id + 1 }));
+  }, []);
+
   return (
     <div className="relative flex h-full flex-col">
       <ScrollArea className="chat-scroll flex-1">
         {messages.length === 0 ? (
-          <EmptyState mode={mode} />
+          <WelcomeScreen mode={mode} onPick={pick} />
         ) : (
           <>
             <MessageList messages={messages} />
@@ -185,34 +195,13 @@ export function ChatStream({
         submitting={submitting}
         onSubmit={submit}
         activeIntegrations={activeIntegrations}
+        prefill={prefill}
         helperText={
           submitting
             ? 'جاري الإرسال…'
             : 'اضغط Enter للإرسال · Shift + Enter لسطر جديد · يقبل صور، PDF، و DOCX'
         }
       />
-    </div>
-  );
-}
-
-function EmptyState({ mode }: { mode: Mode }) {
-  const cfg = getModeConfigByMode(mode);
-  return (
-    <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center p-8 text-center animate-fade-in">
-      <div
-        className={`mb-8 flex h-24 w-32 items-center justify-center rounded-3xl bg-gradient-to-br ${cfg.accent} text-canvas-base ${cfg.glow}`}
-      >
-        <WingsLogo size={40} tone="solid" className="text-canvas-base" />
-      </div>
-      <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-subtle">
-        <span className="font-latin">{cfg.nameEn}</span>
-        <span>·</span>
-        <span>{cfg.nameAr}</span>
-      </div>
-      <h2 className="ds-wordmark mb-3 text-6xl">ملاكي</h2>
-      <p className="max-w-sm text-pretty text-base leading-relaxed text-ink-muted">
-        {cfg.tagline}
-      </p>
     </div>
   );
 }

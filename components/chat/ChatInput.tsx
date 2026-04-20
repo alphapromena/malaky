@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type KeyboardEvent, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type ChangeEvent } from 'react';
 import Link from 'next/link';
 import {
   FileText,
@@ -22,6 +22,9 @@ export const MAX_FILES = 5;
 
 export type ActiveIntegration = { id: string; name: string; nameAr: string };
 
+/** Versioned signal — parent bumps `id` to push new text into the composer. */
+export type PrefillSignal = { text: string; id: number };
+
 function humanSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
@@ -41,6 +44,7 @@ export function ChatInput({
   helperText,
   allowAttachments = true,
   activeIntegrations = [],
+  prefill,
 }: {
   placeholder: string;
   disabled?: boolean;
@@ -49,12 +53,26 @@ export function ChatInput({
   helperText?: string;
   allowAttachments?: boolean;
   activeIntegrations?: ActiveIntegration[];
+  prefill?: PrefillSignal;
 }) {
   const [value, setValue] = useState('');
   const [files, setFiles] = useState<AttachmentFile[]>([]);
   const [fileError, setFileError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // When parent fires a new prefill signal, drop it in and focus.
+  useEffect(() => {
+    if (!prefill || prefill.id === 0) return;
+    setValue(prefill.text);
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill?.id]);
 
   function handleKey(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
